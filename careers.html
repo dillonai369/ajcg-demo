@@ -60,8 +60,42 @@
       <li><a href="contact.html" >Contact</a></li>
     </ul>
     <a href="selling.html" class="nav-cta">Free Valuation</a>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<div class="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu-header">
+    <a href="index.html" class="logo">
+      <div class="logo-mark"><img src="assets/logo/logo.jpg" alt="AJ Commercial Group"/></div>
+      <div>
+        <div class="logo-text">AJ Commercial Group</div>
+        <div class="logo-sub">Multifamily Advisors</div>
+      </div>
+    </a>
+    <button class="mobile-menu-close" aria-label="Close menu">×</button>
+  </div>
+  <ul class="mobile-menu-list">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="our-team.html">About</a></li>
+    <li><a href="recently-sold.html">Recently Sold</a></li>
+    <li><a href="blog.html">Insights</a></li>
+    <li><a href="buying.html">Buying</a></li>
+    <li><a href="selling.html">Selling</a></li>
+    <li><a href="exchange-1031.html">1031 Exchange</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="careers.html">Careers</a></li>
+  </ul>
+  <div class="mobile-menu-footer">
+    <a href="tel:6308957989" class="mobile-menu-phone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      (630) 895-7989
+    </a>
+    <a href="selling.html" class="mobile-menu-cta">Get a Free Valuation</a>
+  </div>
+</div>
 
 <section class="page-header with-skyline">
   <div class="wrap page-header-inner">
@@ -185,6 +219,36 @@
   </div>
 </footer>
 <script>
+// Mobile burger menu toggle (KPro-style)
+(function(){
+  var burger = document.querySelector('.nav-burger');
+  var menu = document.querySelector('.mobile-menu');
+  var closeBtn = document.querySelector('.mobile-menu-close');
+  if (!burger || !menu) return;
+  function open(){
+    burger.classList.add('is-open');
+    menu.classList.add('is-open');
+    document.body.classList.add('menu-open');
+    burger.setAttribute('aria-expanded', 'true');
+    menu.setAttribute('aria-hidden', 'false');
+  }
+  function close(){
+    burger.classList.remove('is-open');
+    menu.classList.remove('is-open');
+    document.body.classList.remove('menu-open');
+    burger.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-hidden', 'true');
+  }
+  burger.addEventListener('click', open);
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  // Close when tapping any link inside the menu (so the page navigation actually happens cleanly)
+  menu.addEventListener('click', function(e){
+    if (e.target.closest('a')) close();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
+  });
+})();
 // Toggle .scrolled on the nav once the hero is out of view (homepage only)
 (function(){
   if (!document.body.classList.contains('has-hero')) return;
