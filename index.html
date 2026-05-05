@@ -12,16 +12,16 @@
 <meta property="og:title" content="Home — AJ Commercial Group" />
 <meta property="og:description" content="Chicago and Midwest multifamily advisors. Trusted by owners. Backed by data. Specialized in multifamily dispositions across Chicago, the southwest suburbs, and beyond." />
 <meta property="og:url" content="https://ajcg.momentumarketing.io" />
-<meta property="og:image" content="https://ajcg.momentumarketing.io/assets/og-image.jpg" />
-<meta property="og:image:width" content="1500" />
-<meta property="og:image:height" content="1000" />
+<meta property="og:image" content="https://ajcg.momentumarketing.io/assets/og-image.png" />
+<meta property="og:image:width" content="1536" />
+<meta property="og:image:height" content="1024" />
 <meta property="og:image:alt" content="AJ Commercial Group — Chicago multifamily team" />
 
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Home — AJ Commercial Group" />
 <meta name="twitter:description" content="Chicago and Midwest multifamily advisors. Trusted by owners. Backed by data. Specialized in multifamily dispositions across Chicago, the southwest suburbs, and beyond." />
-<meta name="twitter:image" content="https://ajcg.momentumarketing.io/assets/og-image.jpg" />
+<meta name="twitter:image" content="https://ajcg.momentumarketing.io/assets/og-image.png" />
 
 <link rel="icon" type="image/jpeg" href="assets/logo/logo.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,8 +60,28 @@
       <li><a href="contact.html" >Contact</a></li>
     </ul>
     <a href="selling.html" class="nav-cta">Free Valuation</a>
+    <button class="nav-burger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<div class="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu-inner">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="our-team.html">About</a></li>
+      <li><a href="recently-sold.html">Recently Sold</a></li>
+      <li><a href="blog.html">Insights</a></li>
+      <li><a href="buying.html">Buying</a></li>
+      <li><a href="selling.html">Selling</a></li>
+      <li><a href="exchange-1031.html">1031 Exchange</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="selling.html" class="mobile-cta">Free Valuation</a>
+    <a href="tel:6308957989" class="mobile-phone">(630) 895-7989</a>
+  </div>
+</div>
 
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline poster="assets/city/IMG_4595.JPG">
@@ -376,6 +396,34 @@
   </div>
 </footer>
 <script>
+// Mobile burger menu toggle
+(function(){
+  var burger = document.querySelector('.nav-burger');
+  var menu = document.querySelector('.mobile-menu');
+  if (!burger || !menu) return;
+  function close(){
+    burger.classList.remove('is-open');
+    menu.classList.remove('is-open');
+    document.body.classList.remove('menu-open');
+    burger.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-hidden', 'true');
+  }
+  function toggle(){
+    var isOpen = !burger.classList.contains('is-open');
+    burger.classList.toggle('is-open', isOpen);
+    menu.classList.toggle('is-open', isOpen);
+    document.body.classList.toggle('menu-open', isOpen);
+    burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    menu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+  }
+  burger.addEventListener('click', toggle);
+  menu.addEventListener('click', function(e){
+    if (e.target.tagName === 'A') close();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
+  });
+})();
 // Toggle .scrolled on the nav once the hero is out of view (homepage only)
 (function(){
   if (!document.body.classList.contains('has-hero')) return;
