@@ -474,9 +474,17 @@ body.menu-open { overflow: hidden; touch-action: none; }
 }
 .hero-side-text { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 6px; }
 @media (max-width: 880px) {
-  .hero { padding: 80px 0 100px; }
+  .hero { padding: 160px 0 120px; }
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .hero-side { display: none; }
+  .hero h1 { margin-bottom: 36px; line-height: 1.1; }
+  .hero-sub { margin-bottom: 48px; font-size: 17px; line-height: 1.65; }
+  .hero-ctas { gap: 12px; }
+}
+@media (max-width: 480px) {
+  .hero { padding: 140px 0 100px; }
+  .hero h1 { margin-bottom: 28px; }
+  .hero-sub { margin-bottom: 36px; }
 }
 
 /* ---------- STATS BAR ---------- */
