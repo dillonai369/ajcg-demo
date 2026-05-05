@@ -1,0 +1,28 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Vercel
+.vercel/
+.env
+.env.local
+
+# Node (if you ever add tooling)
+node_modules/
+npm-debug.log*
+
+# Meeting / proposal artifacts (not part of the public site)
+AJCG_Cheat_Sheet.pdf
+AJCG_Discovery_Questionnaire.docx
+AJCG_Proposal.pdf
+AJCG_Strategic_Brief.docx
+
+# Legacy preview files (replaced by the new multi-page build)
+ajcg_preview.html
+ajcg_preview_screenshot.png
+ajcg_preview_mobile.png
+property-river-birch.html
