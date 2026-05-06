@@ -474,11 +474,11 @@ body.menu-open { overflow: hidden; touch-action: none; }
 }
 .hero-side-text { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 6px; }
 @media (max-width: 880px) {
-  /* Hero fills the full mobile viewport — only stats peek at the bottom edge */
+  /* Hero fills the full mobile viewport — stats peek just at the bottom edge */
   .hero {
     min-height: 100vh;
     min-height: 100svh; /* iOS Safari safe-area aware */
-    padding: 130px 0 50px;
+    padding: 110px 0 44px;
     display: flex;
     align-items: stretch;
   }
@@ -497,23 +497,22 @@ body.menu-open { overflow: hidden; touch-action: none; }
     min-height: 0;
   }
   .hero-side { display: none; }
-  .hero h1 { margin-bottom: 18px; line-height: 1.08; }
-  .hero-sub { margin-bottom: 0; font-size: 16px; line-height: 1.55; max-width: 100%; }
-  /* CTAs pushed to the bottom of the viewport */
-  .hero-grid > div:first-child .hero-ctas {
+  /* Vertically center the headline+subhead between the nav and the CTAs:
+     auto margins above the headline AND above the CTAs split the free space evenly. */
+  .hero-grid > div:first-child > h1 { margin-top: auto; margin-bottom: 18px; line-height: 1.08; }
+  .hero-grid > div:first-child > .hero-sub { margin-bottom: 0; font-size: 16px; line-height: 1.55; max-width: 100%; }
+  .hero-grid > div:first-child > .hero-ctas {
     margin-top: auto;
-    padding-top: 56px;
     gap: 12px;
     flex-direction: column;
     align-items: stretch;
   }
-  .hero-grid > div:first-child .hero-ctas .btn { justify-content: center; padding: 16px 24px; }
+  .hero-grid > div:first-child > .hero-ctas .btn { justify-content: center; padding: 16px 24px; }
 }
 @media (max-width: 480px) {
-  .hero { padding: 110px 0 40px; }
-  .hero h1 { margin-bottom: 14px; font-size: clamp(34px, 9vw, 46px); }
-  .hero-sub { font-size: 15px; }
-  .hero-grid > div:first-child .hero-ctas { padding-top: 40px; }
+  .hero { padding: 100px 0 36px; }
+  .hero-grid > div:first-child > h1 { margin-bottom: 14px; font-size: clamp(34px, 9vw, 46px); }
+  .hero-grid > div:first-child > .hero-sub { font-size: 15px; }
 }
 
 /* ---------- STATS BAR ---------- */
