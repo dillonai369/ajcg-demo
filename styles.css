@@ -1392,6 +1392,9 @@ body.menu-open { overflow: hidden; touch-action: none; }
   /* Sold cards: full-width single column with shorter aspect */
   .sold-grid { gap: 16px; }
   .sold-card { min-height: 220px; }
+  /* On phones, show only the first 3 transactions; "View All" button takes them to the full list */
+  .sold-grid .sold-card:nth-child(n+4) { display: none; }
+  .sold-cta { margin-top: 28px; }
 
   /* Founders text block + stack reflow to a clean single column */
   .founders-grid { grid-template-columns: 1fr !important; gap: 36px; }
