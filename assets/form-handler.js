@@ -22,7 +22,7 @@
  *   - page_url
  * ============================================================ */
 
-const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/REPLACE_WITH_YOUR_GHL_HOOK_ID';
+const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/5VC5Crt63oAfFwA1RTHp/webhook-trigger/938c131b-d8f5-4da2-8a42-5f5fd4f6d060';
 
 (function () {
   // Capture UTM params on page load
