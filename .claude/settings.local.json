@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(rm -f .git/index.lock .git/HEAD.lock)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(shuf -n 3)",
+      "Bash(grep -nE \"^[A-Z][^:]*$\" /Users/dillai/Documents/Claude/Projects/AJcommercial/property_info.txt)",
+      "Bash(tee /tmp/audit_output.txt)",
+      "Bash(grep -v \":0$\")"
+    ]
+  }
+}
