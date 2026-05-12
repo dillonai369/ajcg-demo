@@ -657,7 +657,7 @@ body.menu-open { overflow: hidden; touch-action: none; }
   background: var(--navy);
   border-top: 1px solid rgba(255,255,255,0.08);
   border-bottom: 1px solid rgba(255,255,255,0.08);
-  padding: 14px 0;
+  padding: 18px 0;
   overflow: hidden;
   position: relative;
 }
@@ -672,18 +672,20 @@ body.menu-open { overflow: hidden; touch-action: none; }
 .stats-marquee .marquee-track {
   display: inline-flex;
   align-items: center;
-  gap: 28px;
   white-space: nowrap;
-  animation: marquee-scroll 38s linear infinite;
+  animation: marquee-scroll 40s linear infinite;
   will-change: transform;
 }
+/* Spacing is baked into each child via padding-right (NOT gap) so the
+   duplicated set lines up exactly at translateX(-50%) — no glitch on loop. */
+.stats-marquee .marquee-track > * { padding-right: 32px; }
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
 .stats-marquee .m-item {
   color: var(--white);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.10em;
   text-transform: uppercase;
@@ -692,21 +694,21 @@ body.menu-open { overflow: hidden; touch-action: none; }
   color: var(--gold);
   font-family: var(--display);
   font-weight: 700;
-  font-size: 16px;
-  margin-right: 10px;
+  font-size: 22px;
+  margin-right: 12px;
   letter-spacing: 0;
 }
 .stats-marquee .m-sep {
   color: var(--gold);
-  font-size: 7px;
+  font-size: 8px;
   opacity: 0.65;
 }
 @media (max-width: 640px) {
-  .stats-marquee { padding: 10px 0; }
   .stats-marquee::before, .stats-marquee::after { width: 36px; }
-  .stats-marquee .marquee-track { gap: 22px; animation-duration: 30s; }
+  .stats-marquee .marquee-track { animation-duration: 30s; }
+  .stats-marquee .marquee-track > * { padding-right: 22px; }
   .stats-marquee .m-item { font-size: 12px; letter-spacing: 0.08em; }
-  .stats-marquee .m-item strong { font-size: 13px; margin-right: 7px; }
+  .stats-marquee .m-item strong { font-size: 14px; margin-right: 7px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .stats-marquee .marquee-track { animation: none; }
