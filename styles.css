@@ -569,13 +569,20 @@ body.menu-open { overflow: hidden; touch-action: none; }
   .hero-clean .hero-ctas { display: none; }
 }
 @media (max-width: 880px) {
-  /* Hero leaves room at the bottom so the rolling stats banner is visible without scrolling */
+  /* Hero + marquee together fill exactly one viewport — no white peeking below */
   .hero {
-    min-height: 88vh;
-    min-height: 88svh; /* iOS Safari safe-area aware */
+    min-height: calc(100vh - 46px);
+    min-height: calc(100svh - 46px); /* iOS Safari safe-area aware */
     padding: 110px 0 44px;
     display: flex;
     align-items: stretch;
+  }
+  /* Marquee locked to a fixed height so it sits flush at the bottom of the viewport */
+  .stats-marquee {
+    height: 46px;
+    padding: 0;
+    display: flex;
+    align-items: center;
   }
   /* Old hero-grid (with sidebar) used a flex wrap; the new .hero-clean must remain
      a normal block container so h1 + subhead stack vertically. */
@@ -608,7 +615,8 @@ body.menu-open { overflow: hidden; touch-action: none; }
   .hero-grid > div:first-child > .hero-ctas .btn { justify-content: center; padding: 16px 24px; }
 }
 @media (max-width: 480px) {
-  .hero { min-height: 85vh; min-height: 85svh; padding: 100px 0 36px; }
+  .hero { min-height: calc(100vh - 42px); min-height: calc(100svh - 42px); padding: 100px 0 36px; }
+  .stats-marquee { height: 42px; padding: 0; display: flex; align-items: center; }
   .hero-grid > div:first-child > h1 { margin-bottom: 14px; font-size: clamp(34px, 9vw, 46px); }
   .hero-grid > div:first-child > .hero-sub { font-size: 15px; }
 }
