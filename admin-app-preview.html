@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AJ Commercial — Admin Preview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --navy: #1e3a5f;
+    --navy-2: #2a4a73;
+    --navy-3: #34568a;
+    --gold: #c8a559;
+    --gold-soft: #f3ead7;
+    --ink: #0f172a;
+    --ink-2: #475569;
+    --line: #e2e8f0;
+    --bg: #f7f8fa;
+  }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--ink); margin: 0; }
+  .font-serif { font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; }
+  .sidebar { background: var(--navy); }
+  .nav-item { color: #94a3b8; transition: all 0.15s; }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: #fff; background: rgba(200,165,89,0.12); border-left: 2px solid var(--gold); }
+  .card { background: white; border: 1px solid var(--line); border-radius: 12px; }
+  .stat-up { color: #059669; }
+  .stat-down { color: #dc2626; }
+  .pill { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+  .pill-green { background: #ecfdf5; color: #047857; }
+  .pill-amber { background: #fffbeb; color: #b45309; }
+  .pill-blue { background: #eff6ff; color: #1d4ed8; }
+  .pill-gray { background: #f1f5f9; color: #475569; }
+  .pill-red { background: #fef2f2; color: #b91c1c; }
+  .btn-primary { background: var(--navy); color: white; transition: all 0.15s; }
+  .btn-primary:hover { background: var(--navy-2); }
+  .btn-gold { background: var(--gold); color: var(--navy); transition: all 0.15s; }
+  .btn-gold:hover { background: #b58f44; }
+  .btn-ghost { color: var(--ink-2); transition: all 0.15s; }
+  .btn-ghost:hover { background: #f1f5f9; color: var(--ink); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .editor-area { min-height: 320px; }
+  .upload-zone { border: 2px dashed #cbd5e1; transition: all 0.15s; }
+  .upload-zone:hover { border-color: var(--gold); background: #fffdf7; }
+  .table-row:hover { background: #f8fafc; cursor: pointer; }
+  .ai-glow { background: linear-gradient(135deg, #fef3c7 0%, #f3ead7 100%); border: 1px solid #f5d78b; }
+  .ai-btn { background: linear-gradient(135deg, #1e3358 0%, #2c4a7a 100%); color: white; }
+  .ai-btn:hover { background: linear-gradient(135deg, #142340 0%, #1e3358 100%); }
+  .listing-card { transition: transform 0.15s; }
+  .listing-card:hover { transform: translateY(-2px); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar w-60 flex-shrink-0 flex flex-col">
+    <div class="px-5 py-5 border-b border-white border-opacity-10">
+      <div class="flex items-center gap-3">
+        <!-- Logo: tries logo.png first, falls back to logo.svg, then to styled monogram -->
+        <img
+          id="brand-logo"
+          src="logo.png"
+          alt="AJ Commercial Group"
+          class="w-10 h-10 object-contain rounded"
+          style="background: white; padding: 4px;"
+          onerror="this.onerror=null; this.src='logo.svg'; this.addEventListener('error', () => { this.style.display='none'; document.getElementById('brand-fallback').style.display='flex'; }, { once: true });"
+        />
+        <div id="brand-fallback" class="w-10 h-10 rounded items-center justify-center flex-shrink-0" style="background: var(--gold); display: none;">
+          <span class="font-serif text-lg font-bold" style="color: var(--navy);">AJ</span>
+        </div>
+        <div class="min-w-0">
+          <div class="text-white text-sm font-semibold leading-tight">AJ Commercial</div>
+          <div class="text-slate-300 text-xs">Group · Chicagoland</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 py-4 px-2">
+      <div class="text-xs uppercase tracking-wider text-slate-500 px-3 mb-2">Main</div>
+      <a onclick="showTab('overview')" data-tab="overview" class="nav-item active flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview
+      </a>
+      <a onclick="showTab('leads')" data-tab="leads" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="users" class="w-4 h-4"></i> Leads
+        <span class="ml-auto pill pill-amber">12 new</span>
+      </a>
+      <a onclick="showTab('analytics')" data-tab="analytics" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Analytics
+      </a>
+      <a onclick="showTab('seo')" data-tab="seo" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="search" class="w-4 h-4"></i> SEO
+      </a>
+
+      <div class="text-xs uppercase tracking-wider text-slate-500 px-3 mb-2 mt-5">Content</div>
+      <a onclick="showTab('listings')" data-tab="listings" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="building-2" class="w-4 h-4"></i> Listings
+      </a>
+      <a onclick="showTab('blog')" data-tab="blog" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="file-text" class="w-4 h-4"></i> Blog
+      </a>
+
+      <div class="text-xs uppercase tracking-wider text-slate-500 px-3 mb-2 mt-5">Account</div>
+      <a onclick="showTab('settings')" data-tab="settings" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="settings" class="w-4 h-4"></i> Settings
+      </a>
+    </nav>
+
+    <div class="px-3 py-4 border-t border-white border-opacity-5">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-xs font-semibold">JB</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-white text-xs font-medium truncate">Joey Batliner</div>
+          <div class="text-slate-400 text-xs truncate">Admin</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 flex flex-col min-w-0">
+
+    <!-- ============ OVERVIEW ============ -->
+    <div id="tab-overview" class="tab-content active">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold">Good morning, Joey</h1>
+          <p class="text-sm text-slate-500">Here's what's happening on ajcommercialgroup.com</p>
+        </div>
+        <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
+          <option>Last 30 days</option>
+          <option>Last 7 days</option>
+          <option>Last 90 days</option>
+          <option>This year</option>
+        </select>
+      </header>
+
+      <div class="p-8">
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">New Leads</span>
+              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <div class="text-3xl font-semibold">47</div>
+            <div class="flex items-center gap-1 text-xs mt-2 stat-up">
+              <i data-lucide="trending-up" class="w-3 h-3"></i> +23% vs last month
+            </div>
+          </div>
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Site Visitors</span>
+              <i data-lucide="eye" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <div class="text-3xl font-semibold">8,412</div>
+            <div class="flex items-center gap-1 text-xs mt-2 stat-up">
+              <i data-lucide="trending-up" class="w-3 h-3"></i> +11% vs last month
+            </div>
+          </div>
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Active Listings</span>
+              <i data-lucide="building-2" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <div class="text-3xl font-semibold">14</div>
+            <div class="text-xs mt-2 text-slate-500">3 sold this month</div>
+          </div>
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Avg. Keyword Rank</span>
+              <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <div class="text-3xl font-semibold">7.4</div>
+            <div class="flex items-center gap-1 text-xs mt-2 stat-up">
+              <i data-lucide="trending-up" class="w-3 h-3"></i> Up 2.1 positions
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="card p-5 col-span-2">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-sm">Site traffic — last 30 days</h3>
+              <div class="flex gap-3 text-xs">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background: var(--navy);"></span> Visitors</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background: var(--gold);"></span> Form fills</span>
+              </div>
+            </div>
+            <canvas id="trafficChart" height="100"></canvas>
+          </div>
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-sm">Top pages</h3>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between text-sm">
+                <div class="truncate"><div class="font-medium truncate">Home</div><div class="text-xs text-slate-500">/</div></div>
+                <div class="text-right"><div class="font-medium">3,214</div><div class="text-xs stat-up">+18%</div></div>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <div class="truncate"><div class="font-medium truncate">Sold Listings</div><div class="text-xs text-slate-500">/sold</div></div>
+                <div class="text-right"><div class="font-medium">1,847</div><div class="text-xs stat-up">+34%</div></div>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <div class="truncate"><div class="font-medium truncate">About</div><div class="text-xs text-slate-500">/about</div></div>
+                <div class="text-right"><div class="font-medium">982</div><div class="text-xs stat-up">+6%</div></div>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <div class="truncate"><div class="font-medium truncate">Q1 Market Recap</div><div class="text-xs text-slate-500">/blog/q1-2026...</div></div>
+                <div class="text-right"><div class="font-medium">621</div><div class="text-xs stat-up">+212%</div></div>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <div class="truncate"><div class="font-medium truncate">Contact</div><div class="text-xs text-slate-500">/contact</div></div>
+                <div class="text-right"><div class="font-medium">418</div><div class="text-xs stat-down">-4%</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+            <h3 class="font-semibold text-sm">Recent leads</h3>
+            <button onclick="showTab('leads')" class="text-xs font-medium text-slate-600 hover:text-slate-900">View all leads →</button>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+              <tr>
+                <th class="text-left px-5 py-3 font-medium">Name</th>
+                <th class="text-left px-5 py-3 font-medium">Interest</th>
+                <th class="text-left px-5 py-3 font-medium">Source</th>
+                <th class="text-left px-5 py-3 font-medium">Received</th>
+                <th class="text-left px-5 py-3 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="table-row">
+                <td class="px-5 py-3"><div class="font-medium">Marcus Reynolds</div><div class="text-xs text-slate-500">marcus.r@reynoldscap.com</div></td>
+                <td class="px-5 py-3">Looking to acquire 20+ unit buildings in Logan Square</td>
+                <td class="px-5 py-3"><span class="pill pill-blue">Contact form</span></td>
+                <td class="px-5 py-3 text-slate-500">14 min ago</td>
+                <td class="px-5 py-3"><span class="pill pill-amber">New</span></td>
+              </tr>
+              <tr class="table-row">
+                <td class="px-5 py-3"><div class="font-medium">Priya Shah</div><div class="text-xs text-slate-500">priya@shahre.com</div></td>
+                <td class="px-5 py-3">Listing inquiry: 4421 N Kedzie</td>
+                <td class="px-5 py-3"><span class="pill pill-blue">Listing page</span></td>
+                <td class="px-5 py-3 text-slate-500">2 hrs ago</td>
+                <td class="px-5 py-3"><span class="pill pill-amber">New</span></td>
+              </tr>
+              <tr class="table-row">
+                <td class="px-5 py-3"><div class="font-medium">David Chen</div><div class="text-xs text-slate-500">d.chen@brightoncap.com</div></td>
+                <td class="px-5 py-3">Wants to sell 32-unit in Edgewater</td>
+                <td class="px-5 py-3"><span class="pill pill-blue">Contact form</span></td>
+                <td class="px-5 py-3 text-slate-500">Yesterday</td>
+                <td class="px-5 py-3"><span class="pill pill-green">Contacted</span></td>
+              </tr>
+              <tr class="table-row">
+                <td class="px-5 py-3"><div class="font-medium">Elena Vasquez</div><div class="text-xs text-slate-500">elena@vrealty.io</div></td>
+                <td class="px-5 py-3">Broker collaboration — North Side properties</td>
+                <td class="px-5 py-3"><span class="pill pill-gray">Referral</span></td>
+                <td class="px-5 py-3 text-slate-500">2 days ago</td>
+                <td class="px-5 py-3"><span class="pill pill-green">In progress</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LEADS ============ -->
+    <div id="tab-leads" class="tab-content">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold">Leads</h1>
+          <p class="text-sm text-slate-500">All form submissions and inquiries from your site</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn-ghost text-sm px-3 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="download" class="w-4 h-4"></i> Export CSV</button>
+          <button class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Add lead</button>
+        </div>
+      </header>
+
+      <div class="p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="relative flex-1 max-w-md">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" placeholder="Search by name, email, or message..." class="w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900" />
+          </div>
+          <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
+            <option>All sources</option><option>Contact form</option><option>Listing inquiry</option><option>Referral</option>
+          </select>
+          <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
+            <option>All statuses</option><option>New</option><option>Contacted</option><option>In progress</option><option>Closed</option>
+          </select>
+        </div>
+
+        <div class="card overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+              <tr>
+                <th class="text-left px-5 py-3 font-medium">Name & email</th>
+                <th class="text-left px-5 py-3 font-medium">Phone</th>
+                <th class="text-left px-5 py-3 font-medium">Message preview</th>
+                <th class="text-left px-5 py-3 font-medium">Source</th>
+                <th class="text-left px-5 py-3 font-medium">Received</th>
+                <th class="text-left px-5 py-3 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100" id="leads-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ANALYTICS ============ -->
+    <div id="tab-analytics" class="tab-content">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold">Analytics</h1>
+          <p class="text-sm text-slate-500">Traffic, engagement, and conversion data</p>
+        </div>
+        <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
+          <option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option>
+        </select>
+      </header>
+
+      <div class="p-8 space-y-4">
+        <div class="grid grid-cols-4 gap-4">
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Total visitors</div><div class="text-2xl font-semibold">8,412</div><div class="text-xs stat-up mt-1">+11.4%</div></div>
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Pageviews</div><div class="text-2xl font-semibold">21,094</div><div class="text-xs stat-up mt-1">+18.2%</div></div>
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Avg. session</div><div class="text-2xl font-semibold">2m 47s</div><div class="text-xs stat-up mt-1">+12s</div></div>
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Conversion rate</div><div class="text-2xl font-semibold">0.56%</div><div class="text-xs stat-up mt-1">+0.08%</div></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <div class="card p-5 col-span-2">
+            <h3 class="font-semibold text-sm mb-4">Visitors over time</h3>
+            <canvas id="analyticsChart" height="100"></canvas>
+          </div>
+          <div class="card p-5">
+            <h3 class="font-semibold text-sm mb-4">Traffic sources</h3>
+            <canvas id="sourcesChart" height="180"></canvas>
+            <div class="mt-4 space-y-2 text-sm">
+              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span>Organic search</span><span class="font-medium">42%</span></div>
+              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background: var(--gold);"></span>Direct</span><span class="font-medium">31%</span></div>
+              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Referral</span><span class="font-medium">18%</span></div>
+              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-400"></span>Social</span><span class="font-medium">9%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="card p-5">
+            <h3 class="font-semibold text-sm mb-4">Top link clicks</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex items-center justify-between"><span class="truncate">"View our sold listings" CTA</span><span class="font-medium">412</span></div>
+              <div class="flex items-center justify-between"><span class="truncate">Email — joey@ajcommercial...</span><span class="font-medium">187</span></div>
+              <div class="flex items-center justify-between"><span class="truncate">Phone — (773) 555-0190</span><span class="font-medium">156</span></div>
+              <div class="flex items-center justify-between"><span class="truncate">"Schedule a consultation" CTA</span><span class="font-medium">94</span></div>
+              <div class="flex items-center justify-between"><span class="truncate">LinkedIn — Anthony Munoz</span><span class="font-medium">61</span></div>
+            </div>
+          </div>
+          <div class="card p-5">
+            <h3 class="font-semibold text-sm mb-4">Devices</h3>
+            <div class="space-y-3 text-sm">
+              <div><div class="flex justify-between mb-1"><span>Desktop</span><span class="font-medium">54%</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full" style="width: 54%; background: var(--navy);"></div></div></div>
+              <div><div class="flex justify-between mb-1"><span>Mobile</span><span class="font-medium">41%</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full" style="width: 41%; background: var(--gold);"></div></div></div>
+              <div><div class="flex justify-between mb-1"><span>Tablet</span><span class="font-medium">5%</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-slate-400" style="width: 5%;"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SEO ============ -->
+    <div id="tab-seo" class="tab-content">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold">SEO</h1>
+          <p class="text-sm text-slate-500">Keyword rankings, backlinks, and competitor benchmarks</p>
+        </div>
+        <button class="btn-ghost text-sm px-3 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Track new keyword</button>
+      </header>
+
+      <div class="p-8 space-y-4">
+        <div class="grid grid-cols-4 gap-4">
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Tracked keywords</div><div class="text-2xl font-semibold">42</div></div>
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">In top 10</div><div class="text-2xl font-semibold">18</div><div class="text-xs stat-up mt-1">+4 this month</div></div>
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Domain authority</div><div class="text-2xl font-semibold">28</div><div class="text-xs stat-up mt-1">+2 this quarter</div></div>
+          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Backlinks</div><div class="text-2xl font-semibold">147</div><div class="text-xs stat-up mt-1">+12 new</div></div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-200"><h3 class="font-semibold text-sm">Keyword rankings</h3></div>
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+              <tr>
+                <th class="text-left px-5 py-3 font-medium">Keyword</th>
+                <th class="text-left px-5 py-3 font-medium">Position</th>
+                <th class="text-left px-5 py-3 font-medium">Change</th>
+                <th class="text-left px-5 py-3 font-medium">Volume / mo</th>
+                <th class="text-left px-5 py-3 font-medium">Ranking URL</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="px-5 py-3 font-medium">chicago multifamily broker</td><td class="px-5 py-3">3</td><td class="px-5 py-3 stat-up">▲ 2</td><td class="px-5 py-3">1,300</td><td class="px-5 py-3 text-xs text-slate-500">/services</td></tr>
+              <tr><td class="px-5 py-3 font-medium">logan square apartment building for sale</td><td class="px-5 py-3">2</td><td class="px-5 py-3 stat-up">▲ 5</td><td class="px-5 py-3">720</td><td class="px-5 py-3 text-xs text-slate-500">/sold</td></tr>
+              <tr><td class="px-5 py-3 font-medium">north side chicago commercial real estate</td><td class="px-5 py-3">7</td><td class="px-5 py-3 stat-up">▲ 1</td><td class="px-5 py-3">880</td><td class="px-5 py-3 text-xs text-slate-500">/</td></tr>
+              <tr><td class="px-5 py-3 font-medium">sell my apartment building chicago</td><td class="px-5 py-3">11</td><td class="px-5 py-3 stat-down">▼ 3</td><td class="px-5 py-3">390</td><td class="px-5 py-3 text-xs text-slate-500">/sellers</td></tr>
+              <tr><td class="px-5 py-3 font-medium">chicagoland investment property broker</td><td class="px-5 py-3">5</td><td class="px-5 py-3 stat-up">▲ 4</td><td class="px-5 py-3">260</td><td class="px-5 py-3 text-xs text-slate-500">/about</td></tr>
+              <tr><td class="px-5 py-3 font-medium">edgewater apartment building broker</td><td class="px-5 py-3">4</td><td class="px-5 py-3 stat-up">▲ 6</td><td class="px-5 py-3">170</td><td class="px-5 py-3 text-xs text-slate-500">/sold</td></tr>
+              <tr><td class="px-5 py-3 font-medium">multifamily cap rates chicago 2026</td><td class="px-5 py-3">9</td><td class="px-5 py-3 stat-up">▲ 12</td><td class="px-5 py-3">110</td><td class="px-5 py-3 text-xs text-slate-500">/blog/q1-2026-market-recap</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LISTINGS ============ -->
+    <div id="tab-listings" class="tab-content">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold">Listings</h1>
+          <p class="text-sm text-slate-500">Manage active and sold listings displayed on your site</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
+            <option>All listings</option><option>Active</option><option>Sold</option><option>Drafts</option>
+          </select>
+          <button onclick="showListingEditor()" class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Add listing</button>
+        </div>
+      </header>
+
+      <div id="listings-grid" class="p-8">
+        <div class="grid grid-cols-3 gap-5">
+          <div class="card listing-card overflow-hidden">
+            <div class="h-44 bg-gradient-to-br from-slate-700 to-slate-900 relative flex items-center justify-center">
+              <div class="absolute top-3 left-3 pill" style="background: rgba(0,0,0,0.6); color: white;">SOLD</div>
+              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">12 photos</div>
+              <span class="text-slate-500 text-xs">[Listing photo]</span>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-slate-500 mb-1">Logan Square · Sold Mar 2026</div>
+              <div class="font-semibold text-sm mb-1">4421 N Kedzie Ave</div>
+              <div class="text-xs text-slate-600 mb-3">28-unit · 22,400 sqft · 6.2% cap</div>
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">$4.85M</div>
+                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="card listing-card overflow-hidden">
+            <div class="h-44 bg-gradient-to-br from-amber-700 to-amber-900 relative flex items-center justify-center">
+              <div class="absolute top-3 left-3 pill" style="background: rgba(0,0,0,0.6); color: white;">SOLD</div>
+              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">9 photos</div>
+              <span class="text-amber-200 text-xs">[Listing photo]</span>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-slate-500 mb-1">Edgewater · Sold Feb 2026</div>
+              <div class="font-semibold text-sm mb-1">5919 N Winthrop Ave</div>
+              <div class="text-xs text-slate-600 mb-3">32-unit · 28,100 sqft · 6.8% cap</div>
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">$6.20M</div>
+                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="card listing-card overflow-hidden">
+            <div class="h-44 bg-gradient-to-br from-emerald-800 to-emerald-950 relative flex items-center justify-center">
+              <div class="absolute top-3 left-3 pill pill-green">ACTIVE</div>
+              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">14 photos</div>
+              <span class="text-emerald-200 text-xs">[Listing photo]</span>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-slate-500 mb-1">Lincoln Square · Listed Apr 2026</div>
+              <div class="font-semibold text-sm mb-1">4810 N Western Ave</div>
+              <div class="text-xs text-slate-600 mb-3">18-unit · 16,200 sqft · 6.5% cap</div>
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">$3.65M</div>
+                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="card listing-card overflow-hidden">
+            <div class="h-44 bg-gradient-to-br from-slate-600 to-slate-800 relative flex items-center justify-center">
+              <div class="absolute top-3 left-3 pill pill-green">ACTIVE</div>
+              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">11 photos</div>
+              <span class="text-slate-400 text-xs">[Listing photo]</span>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-slate-500 mb-1">Uptown · Listed Apr 2026</div>
+              <div class="font-semibold text-sm mb-1">4523 N Magnolia Ave</div>
+              <div class="text-xs text-slate-600 mb-3">24-unit · 19,800 sqft · 6.4% cap</div>
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">$4.40M</div>
+                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="card listing-card overflow-hidden">
+            <div class="h-44 bg-gradient-to-br from-stone-700 to-stone-900 relative flex items-center justify-center">
+              <div class="absolute top-3 left-3 pill" style="background: rgba(0,0,0,0.6); color: white;">SOLD</div>
+              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">8 photos</div>
+              <span class="text-stone-400 text-xs">[Listing photo]</span>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-slate-500 mb-1">Rogers Park · Sold Jan 2026</div>
+              <div class="font-semibold text-sm mb-1">1638 W Howard St</div>
+              <div class="text-xs text-slate-600 mb-3">16-unit · 14,400 sqft · 7.1% cap</div>
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">$2.95M</div>
+                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+          <div onclick="showListingEditor()" class="card listing-card overflow-hidden cursor-pointer flex items-center justify-center" style="min-height: 280px; border-style: dashed;">
+            <div class="text-center p-6">
+              <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3"><i data-lucide="plus" class="w-6 h-6 text-slate-400"></i></div>
+              <div class="font-medium text-sm">Add a new listing</div>
+              <div class="text-xs text-slate-500 mt-1">Photos + details auto-publish to your site</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="listing-editor" class="p-8" style="display:none;">
+        <button onclick="hideListingEditor()" class="btn-ghost text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to listings</button>
+        <div class="grid grid-cols-3 gap-5">
+          <div class="col-span-2 space-y-4">
+            <div class="card p-6">
+              <h3 class="font-semibold mb-1">New listing</h3>
+              <p class="text-xs text-slate-500 mb-5">Will appear on /listings within 30 seconds of publishing</p>
+
+              <label class="block text-xs font-medium text-slate-600 mb-1.5">Property name</label>
+              <input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-4" placeholder="e.g. The Magnolia — 24-Unit Uptown Walkup" />
+
+              <label class="block text-xs font-medium text-slate-600 mb-1.5">Street address</label>
+              <input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-4" placeholder="4523 N Magnolia Ave, Chicago IL 60640" />
+
+              <div class="grid grid-cols-3 gap-3 mb-4">
+                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Sale price</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="$4,400,000" /></div>
+                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Units</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="24" /></div>
+                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Cap rate</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="6.4%" /></div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3 mb-4">
+                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Square footage</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="19,800" /></div>
+                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Year built</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="1924" /></div>
+                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Neighborhood</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="Uptown" /></div>
+              </div>
+
+              <label class="block text-xs font-medium text-slate-600 mb-1.5">Property photos</label>
+              <div class="upload-zone rounded-lg p-8 text-center mb-4 cursor-pointer">
+                <i data-lucide="image-plus" class="w-7 h-7 mx-auto text-slate-400 mb-2"></i>
+                <div class="text-sm font-medium">Drop photos here, or click to upload</div>
+                <div class="text-xs text-slate-500 mt-1">First photo becomes the hero image · auto-optimized to WebP</div>
+              </div>
+
+              <label class="block text-xs font-medium text-slate-600 mb-1.5">Description</label>
+              <div class="border border-slate-200 rounded-lg mb-4">
+                <div class="border-b border-slate-200 px-3 py-2 flex items-center gap-1 text-slate-500 text-xs">
+                  <button class="btn-ghost p-1.5 rounded font-bold">B</button>
+                  <button class="btn-ghost p-1.5 rounded italic">I</button>
+                  <button class="btn-ghost p-1.5 rounded underline">U</button>
+                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <textarea class="w-full px-3 py-2 text-sm resize-none focus:outline-none" rows="6" placeholder="A pristine 24-unit walkup in the heart of Uptown..."></textarea>
+              </div>
+
+              <div class="ai-glow rounded-lg p-4 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles" class="w-5 h-5" style="color: var(--gold);"></i></div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium">Generate description with Claude</div>
+                  <div class="text-xs text-slate-600">Drop in bullet points or unit details — get polished marketing copy in seconds.</div>
+                </div>
+                <button class="ai-btn text-xs px-3 py-2 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Status</h4>
+              <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-3">
+                <option>Draft</option><option>Active — for sale</option><option>Under contract</option><option selected>Sold</option>
+              </select>
+              <label class="block text-xs font-medium text-slate-600 mb-1.5">Sale date</label>
+              <input type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-3" />
+              <label class="flex items-center gap-2 text-sm mt-3"><input type="checkbox" checked /> Feature on homepage</label>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Publish settings</h4>
+              <div class="text-xs text-slate-500 mb-3">URL slug</div>
+              <div class="text-xs font-mono bg-slate-50 border border-slate-200 rounded px-2 py-1.5 mb-3 truncate">/sold/4523-n-magnolia</div>
+              <button class="w-full btn-primary text-sm py-2.5 rounded-lg font-semibold mb-2">Publish to site</button>
+              <button class="w-full btn-ghost text-sm py-2.5 rounded-lg">Save as draft</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BLOG ============ -->
+    <div id="tab-blog" class="tab-content">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold">Blog</h1>
+          <p class="text-sm text-slate-500">Publish articles to ajcommercialgroup.com/blog</p>
+        </div>
+        <button onclick="showBlogEditor()" class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> New post</button>
+      </header>
+
+      <div id="blog-list" class="p-8">
+        <div class="card overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+              <tr>
+                <th class="text-left px-5 py-3 font-medium">Title</th>
+                <th class="text-left px-5 py-3 font-medium">Status</th>
+                <th class="text-left px-5 py-3 font-medium">Views</th>
+                <th class="text-left px-5 py-3 font-medium">Published</th>
+                <th class="text-left px-5 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="table-row" onclick="showBlogEditor()">
+                <td class="px-5 py-4"><div class="font-medium">Chicagoland Q1 2026 Multifamily Market Recap</div><div class="text-xs text-slate-500 mt-0.5">Cap rates compressed slightly on north-side trades while...</div></td>
+                <td class="px-5 py-4"><span class="pill pill-green">Published</span></td>
+                <td class="px-5 py-4">621</td>
+                <td class="px-5 py-4 text-slate-500">Apr 12, 2026</td>
+                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
+              </tr>
+              <tr class="table-row" onclick="showBlogEditor()">
+                <td class="px-5 py-4"><div class="font-medium">5 Things to Look for in a Logan Square 20+ Unit Building</div><div class="text-xs text-slate-500 mt-0.5">From boiler condition to tuckpointing — the seasoned investor's checklist...</div></td>
+                <td class="px-5 py-4"><span class="pill pill-green">Published</span></td>
+                <td class="px-5 py-4">387</td>
+                <td class="px-5 py-4 text-slate-500">Mar 28, 2026</td>
+                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
+              </tr>
+              <tr class="table-row" onclick="showBlogEditor()">
+                <td class="px-5 py-4"><div class="font-medium">Why We Sold $24M of Inventory in Q1 (and What's Coming)</div><div class="text-xs text-slate-500 mt-0.5">A look behind the scenes at our brokerage approach...</div></td>
+                <td class="px-5 py-4"><span class="pill pill-amber">Draft</span></td>
+                <td class="px-5 py-4">—</td>
+                <td class="px-5 py-4 text-slate-500">—</td>
+                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
+              </tr>
+              <tr class="table-row" onclick="showBlogEditor()">
+                <td class="px-5 py-4"><div class="font-medium">Edgewater vs. Uptown: Where Are Cap Rates Heading?</div><div class="text-xs text-slate-500 mt-0.5">Side-by-side neighborhood analysis based on 18 months of trades...</div></td>
+                <td class="px-5 py-4"><span class="pill pill-green">Published</span></td>
+                <td class="px-5 py-4">512</td>
+                <td class="px-5 py-4 text-slate-500">Feb 14, 2026</td>
+                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="blog-editor" class="p-8" style="display:none;">
+        <button onclick="hideBlogEditor()" class="btn-ghost text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to all posts</button>
+        <div class="grid grid-cols-3 gap-5">
+          <div class="col-span-2 space-y-4">
+            <div class="card p-6">
+              <input class="w-full text-2xl font-semibold mb-4 focus:outline-none" placeholder="Post title" value="Why We Sold $24M of Inventory in Q1 (and What's Coming)" />
+              <div class="upload-zone rounded-lg p-6 text-center mb-5 cursor-pointer">
+                <i data-lucide="image-plus" class="w-7 h-7 mx-auto text-slate-400 mb-2"></i>
+                <div class="text-sm font-medium">Add a hero image</div>
+                <div class="text-xs text-slate-500 mt-1">Recommended 1600x900</div>
+              </div>
+              <div class="border border-slate-200 rounded-lg">
+                <div class="border-b border-slate-200 px-3 py-2 flex items-center gap-1 text-slate-500 text-xs">
+                  <select class="text-xs bg-transparent mr-2"><option>Paragraph</option><option>Heading 1</option><option>Heading 2</option></select>
+                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
+                  <button class="btn-ghost p-1.5 rounded font-bold">B</button>
+                  <button class="btn-ghost p-1.5 rounded italic">I</button>
+                  <button class="btn-ghost p-1.5 rounded underline">U</button>
+                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list-ordered" class="w-3.5 h-3.5"></i></button>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="quote" class="w-3.5 h-3.5"></i></button>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="image" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <div class="editor-area p-4 text-sm leading-relaxed">
+                  <p class="mb-3">It's been a record quarter at AJ Commercial Group. Between mid-January and the end of March, we closed five north-side multifamily transactions totaling $24.3M in volume — a 47% jump over Q1 2025 and our strongest first quarter in the firm's history.</p>
+                  <p class="mb-3">A few questions we've been getting from buyers and sellers...</p>
+                  <p class="text-slate-400">[ Continue writing or use AI to draft a section → ]</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-glow rounded-lg p-5">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center"><i data-lucide="sparkles" class="w-5 h-5" style="color: var(--gold);"></i></div>
+                <div>
+                  <div class="text-sm font-semibold">Claude Opus 4.6 assist</div>
+                  <div class="text-xs text-slate-600">Polish prose, expand bullet points into paragraphs, or generate SEO meta.</div>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="wand-2" class="w-3.5 h-3.5"></i> Polish selection</button>
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="expand" class="w-3.5 h-3.5"></i> Expand bullets</button>
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="search" class="w-3.5 h-3.5"></i> Generate SEO meta</button>
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="link" class="w-3.5 h-3.5"></i> Suggest internal links</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Publish</h4>
+              <div class="flex items-center justify-between text-sm mb-3"><span class="text-slate-600">Status</span><span class="pill pill-amber">Draft</span></div>
+              <div class="flex items-center justify-between text-sm mb-3"><span class="text-slate-600">Visibility</span><select class="text-xs bg-transparent"><option>Public</option><option>Password</option><option>Private</option></select></div>
+              <div class="flex items-center justify-between text-sm mb-4"><span class="text-slate-600">Schedule</span><button class="text-xs btn-ghost px-2 py-1 rounded">Immediately</button></div>
+              <button class="w-full btn-primary text-sm py-2.5 rounded-lg font-semibold mb-2">Publish post</button>
+              <button class="w-full btn-ghost text-sm py-2.5 rounded-lg">Save draft</button>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">SEO</h4>
+              <label class="block text-xs font-medium text-slate-600 mb-1">URL slug</label>
+              <input class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-mono mb-3" value="why-we-sold-24m-q1-2026" />
+              <label class="block text-xs font-medium text-slate-600 mb-1">Meta title</label>
+              <input class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs mb-3" value="Q1 2026 Recap: $24M Sold | AJ Commercial Group" />
+              <label class="block text-xs font-medium text-slate-600 mb-1">Meta description</label>
+              <textarea class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs" rows="3">Inside our record-setting Q1: five north-side closings, $24.3M in volume, and what's next for Chicagoland multifamily.</textarea>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Category & tags</h4>
+              <select class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs mb-3">
+                <option>Market Updates</option><option>Investor Insights</option><option>Neighborhood Spotlights</option>
+              </select>
+              <div class="flex flex-wrap gap-1">
+                <span class="pill pill-gray">Q1 2026</span>
+                <span class="pill pill-gray">Multifamily</span>
+                <span class="pill pill-gray">North Side</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SETTINGS ============ -->
+    <div id="tab-settings" class="tab-content">
+      <header class="bg-white border-b border-slate-200 px-8 py-5">
+        <h1 class="text-xl font-semibold">Settings</h1>
+        <p class="text-sm text-slate-500">Team, integrations, and account preferences</p>
+      </header>
+
+      <div class="p-8 space-y-4 max-w-3xl">
+        <div class="card p-6">
+          <h3 class="font-semibold mb-1">Team members</h3>
+          <p class="text-xs text-slate-500 mb-4">Both founders have full admin access</p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-xs font-semibold">JB</div>
+              <div class="flex-1"><div class="text-sm font-medium">Joey Batliner</div><div class="text-xs text-slate-500">joey@ajcommercialgroup.com</div></div>
+              <span class="pill pill-blue">Admin</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white text-xs font-semibold">AM</div>
+              <div class="flex-1"><div class="text-sm font-medium">Anthony Munoz</div><div class="text-xs text-slate-500">anthony@ajcommercialgroup.com</div></div>
+              <span class="pill pill-blue">Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="font-semibold mb-1">Connected services</h3>
+          <p class="text-xs text-slate-500 mb-4">Data sources feeding your dashboard</p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
+              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-semibold">GHL</div>
+              <div class="flex-1"><div class="text-sm font-medium">GoHighLevel</div><div class="text-xs text-slate-500">Marketing site + form submissions</div></div>
+              <span class="pill pill-green">Connected</span>
+            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
+              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div>
+              <div class="flex-1"><div class="text-sm font-medium">Plausible Analytics</div><div class="text-xs text-slate-500">Page views, link clicks, visitor data</div></div>
+              <span class="pill pill-green">Connected</span>
+            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
+              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="search" class="w-5 h-5"></i></div>
+              <div class="flex-1"><div class="text-sm font-medium">DataForSEO</div><div class="text-xs text-slate-500">Keyword ranks, backlinks, competitor data</div></div>
+              <span class="pill pill-green">Connected</span>
+            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
+              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+              <div class="flex-1"><div class="text-sm font-medium">Claude (Anthropic API)</div><div class="text-xs text-slate-500">AI drafting for blogs and listings</div></div>
+              <span class="pill pill-green">Connected</span>
+            </div>
+            <div class="flex items-center gap-3 py-2">
+              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="image" class="w-5 h-5"></i></div>
+              <div class="flex-1"><div class="text-sm font-medium">Cloudinary</div><div class="text-xs text-slate-500">Image hosting + auto-optimization</div></div>
+              <span class="pill pill-green">Connected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="font-semibold mb-1">Notifications</h3>
+          <p class="text-xs text-slate-500 mb-4">Email alerts for new leads and milestones</p>
+          <label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" checked /> New lead notifications (instant)</label>
+          <label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" checked /> Weekly performance summary (Mondays)</label>
+          <label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" /> Keyword rank changes (top 10 only)</label>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function refreshIcons() { if (window.lucide) lucide.createIcons(); }
+
+  function showTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('tab-' + tab);
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navEl = document.querySelector(`[data-tab="${tab}"]`);
+    if (navEl) navEl.classList.add('active');
+    if (tab === 'analytics') setTimeout(initAnalyticsCharts, 60);
+    refreshIcons();
+  }
+
+  function showBlogEditor() {
+    document.getElementById('blog-list').style.display = 'none';
+    document.getElementById('blog-editor').style.display = 'block';
+    refreshIcons();
+  }
+  function hideBlogEditor() {
+    document.getElementById('blog-list').style.display = 'block';
+    document.getElementById('blog-editor').style.display = 'none';
+  }
+  function showListingEditor() {
+    document.getElementById('listings-grid').style.display = 'none';
+    document.getElementById('listing-editor').style.display = 'block';
+    refreshIcons();
+  }
+  function hideListingEditor() {
+    document.getElementById('listings-grid').style.display = 'block';
+    document.getElementById('listing-editor').style.display = 'none';
+  }
+
+  const leads = [
+    { name: 'Marcus Reynolds', email: 'marcus.r@reynoldscap.com', phone: '(312) 555-0142', msg: 'Looking to acquire 20+ unit buildings in Logan Square', source: 'Contact form', received: '14 min ago', status: 'new' },
+    { name: 'Priya Shah', email: 'priya@shahre.com', phone: '(773) 555-0188', msg: 'Listing inquiry: 4421 N Kedzie — wanting to tour', source: 'Listing page', received: '2 hrs ago', status: 'new' },
+    { name: 'David Chen', email: 'd.chen@brightoncap.com', phone: '(708) 555-0119', msg: 'Wants to sell 32-unit in Edgewater', source: 'Contact form', received: 'Yesterday', status: 'contacted' },
+    { name: 'Elena Vasquez', email: 'elena@vrealty.io', phone: '(312) 555-0233', msg: 'Broker collaboration — North Side properties', source: 'Referral', received: '2 days ago', status: 'progress' },
+    { name: 'James OBrien', email: 'jobrien@1031partners.com', phone: '(872) 555-0144', msg: '1031 exchange — need replacement property by Jul', source: 'Listing page', received: '3 days ago', status: 'progress' },
+    { name: 'Sofia Marchetti', email: 'sofia@marchettifund.com', phone: '(312) 555-0177', msg: 'Fund acquiring 50-100 unit assets in Chicagoland', source: 'Contact form', received: '4 days ago', status: 'contacted' },
+    { name: 'Kevin Park', email: 'kpark@parkcap.com', phone: '(773) 555-0166', msg: 'First-time buyer — 8-12 units in Lakeview', source: 'Contact form', received: '5 days ago', status: 'closed' },
+    { name: 'Rachel Goldberg', email: 'rachel@goldbergco.com', phone: '(312) 555-0125', msg: 'Sold 4-flat with you in 2024, looking again', source: 'Referral', received: '1 week ago', status: 'progress' },
+  ];
+  const statusPills = {
+    new: '<span class="pill pill-amber">New</span>',
+    contacted: '<span class="pill pill-green">Contacted</span>',
+    progress: '<span class="pill pill-blue">In progress</span>',
+    closed: '<span class="pill pill-gray">Closed</span>',
+  };
+  function populateLeads() {
+    const tbody = document.getElementById('leads-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = leads.map(l => `
+      <tr class="table-row">
+        <td class="px-5 py-3"><div class="font-medium">${l.name}</div><div class="text-xs text-slate-500">${l.email}</div></td>
+        <td class="px-5 py-3 text-slate-600">${l.phone}</td>
+        <td class="px-5 py-3 max-w-xs"><div class="truncate text-slate-600">${l.msg}</div></td>
+        <td class="px-5 py-3"><span class="pill pill-blue">${l.source}</span></td>
+        <td class="px-5 py-3 text-slate-500">${l.received}</td>
+        <td class="px-5 py-3">${statusPills[l.status]}</td>
+      </tr>
+    `).join('');
+  }
+
+  let trafficChartInstance, analyticsChartInstance, sourcesChartInstance;
+  function initCharts() {
+    const ctx = document.getElementById('trafficChart');
+    if (!ctx || trafficChartInstance) return;
+    const labels = Array.from({length: 30}, (_, i) => `${i + 1}`);
+    const visitorsData = [180,210,195,240,260,310,295,280,320,355,340,380,360,395,420,400,440,460,430,475,490,510,495,540,560,590,570,610,640,680];
+    const formsData = visitorsData.map(v => Math.round(v * 0.012));
+    trafficChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Visitors', data: visitorsData, borderColor: '#0a1628', backgroundColor: 'rgba(10,22,40,0.06)', fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2 },
+          { label: 'Form fills', data: formsData.map(v => v * 25), borderColor: '#c8a559', backgroundColor: 'transparent', tension: 0.35, pointRadius: 0, borderWidth: 2, borderDash: [4,4] },
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } },
+          y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8' } }
+        }
+      }
+    });
+  }
+  function initAnalyticsCharts() {
+    const ctx1 = document.getElementById('analyticsChart');
+    if (ctx1 && !analyticsChartInstance) {
+      const labels = Array.from({length: 30}, (_, i) => `${i + 1}`);
+      analyticsChartInstance = new Chart(ctx1, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Visitors', data: [220,260,245,280,310,360,340,320,370,400,385,425,405,445,470,455,490,510,485,525,545,570,555,595,615,640,625,670,695,725], backgroundColor: '#0a1628', borderRadius: 3, barThickness: 8 }] },
+        options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } }, y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8' } } } }
+      });
+    }
+    const ctx2 = document.getElementById('sourcesChart');
+    if (ctx2 && !sourcesChartInstance) {
+      sourcesChartInstance = new Chart(ctx2, {
+        type: 'doughnut',
+        data: { labels: ['Organic search','Direct','Referral','Social'], datasets: [{ data: [42,31,18,9], backgroundColor: ['#0a1628','#c8a559','#3b82f6','#94a3b8'], borderWidth: 0 }] },
+        options: { plugins: { legend: { display: false } }, cutout: '65%' }
+      });
+    }
+  }
+
+  // Initialize on load
+  window.addEventListener('DOMContentLoaded', () => {
+    refreshIcons();
+    initCharts();
+    populateLeads();
+  });
+  // Fallback if event already fired
+  refreshIcons();
+  initCharts();
+  populateLeads();
+</script>
+</body>
+</html>

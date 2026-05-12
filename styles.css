@@ -748,10 +748,55 @@ body.menu-open { overflow: hidden; touch-action: none; }
   font-family: var(--serif); font-size: 80px; font-weight: 600;
   color: var(--gold); letter-spacing: -0.02em;
 }
+.team-photo.real {
+  background-size: cover;
+  background-position: center 20%;
+}
+.team-photo.real::after { content: none; }
 .team-name { font-family: var(--serif); font-size: 22px; color: var(--brand-blue); font-weight: 600; margin-bottom: 4px; }
-.team-role { font-style: italic; color: var(--muted); font-size: 14px; }
+.team-role { font-style: italic; color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+.team-contact {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.team-contact a {
+  color: var(--brand-blue);
+  text-decoration: none;
+  transition: color 0.2s;
+  word-break: break-all;
+}
+.team-contact a:hover { color: var(--gold); }
 .team-card.partner .team-photo { aspect-ratio: 4 / 4.5; }
 .team-card.partner .team-name { font-size: 26px; }
+
+/* Founder bios — full paragraphs below the partner photos */
+.founder-bios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  max-width: 1000px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
+}
+.founder-bio h3 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--brand-blue);
+  margin-bottom: 16px;
+  letter-spacing: 0.01em;
+}
+.founder-bio p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.founder-bio p:last-child { margin-bottom: 0; }
+@media (max-width: 880px) {
+  .founder-bios { grid-template-columns: 1fr; gap: 36px; margin: 30px auto 60px; }
+}
 
 /* ---------- BLOG GRID ---------- */
 .blog-section { background: var(--white); padding: 100px 0; }
