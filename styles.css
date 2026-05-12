@@ -90,14 +90,16 @@ p.lede { font-size: 19px; color: var(--ink-soft); line-height: 1.65; }
 /* ---------- LOGO (new AJ standalone mark — clean, no card) ---------- */
 .logo { display: flex; align-items: center; gap: 14px; color: var(--white); text-decoration: none; }
 .logo-mark {
-  width: 56px; height: 56px; flex-shrink: 0;
+  width: 88px; height: 88px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
+  background: var(--white);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
 }
 .logo-mark img {
   width: 100%; height: 100%; object-fit: contain;
-  /* On dark nav backgrounds, invert the navy-blue AJ letters to white for visibility. */
-  filter: brightness(0) invert(1);
 }
 /* Footer / dark surfaces use the white-inverted logo by default. */
 .logo-text { font-family: var(--serif); font-size: 19px; font-weight: 500; letter-spacing: 0.04em; line-height: 1.05; }
@@ -505,7 +507,9 @@ body.menu-open { overflow: hidden; touch-action: none; }
 .hero-clean { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; }
 .hero-clean .wrap { position: relative; z-index: 2; }
 .hero-clean-inner {
-  max-width: 880px;
+  max-width: 720px;
+  margin-left: 0;
+  margin-right: auto;
   padding: 60px 0;
 }
 .hero-clean h1 {
