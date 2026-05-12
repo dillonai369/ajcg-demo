@@ -186,7 +186,7 @@ body.has-hero .nav.scrolled {
 .nav-links { display: flex; align-items: center; gap: 32px; }
 .nav-links > li { list-style: none; position: relative; }
 .nav-links a {
-  color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.92); font-size: 13px; font-weight: 600;
   letter-spacing: 0.06em; text-transform: uppercase;
   transition: color 0.2s; padding: 6px 0; display: inline-flex; align-items: center; gap: 6px;
 }
@@ -215,7 +215,7 @@ body.has-hero .nav.scrolled {
 .dropdown a:hover { background: var(--paper); color: var(--brand-blue); }
 .nav-cta {
   background: var(--brand-blue); color: var(--white);
-  padding: 11px 22px; font-size: 12px; font-weight: 600;
+  padding: 11px 22px; font-size: 12px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
   border-radius: var(--radius);
   transition: background 0.2s;
