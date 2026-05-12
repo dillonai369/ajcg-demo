@@ -23,7 +23,11 @@
   --display: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
   --radius: 6px;
   --radius-sm: 4px;
+  /* Shared horizontal content padding — keeps nav-logo + hero text on the same x */
+  --content-pad-x: clamp(48px, 7vw, 120px);
 }
+@media (max-width: 1080px) { :root { --content-pad-x: 36px; } }
+@media (max-width: 640px)  { :root { --content-pad-x: 22px; } }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -151,7 +155,7 @@ body.has-hero .nav.scrolled {
 }
 .nav-inner {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 18px clamp(48px, 7vw, 120px); max-width: none; margin: 0;
+  padding: 18px var(--content-pad-x); max-width: none; margin: 0;
 }
 /* Centered nav variant — Interra-style: logo left, links centered, right cluster */
 .nav-centered .nav-inner {
@@ -178,8 +182,7 @@ body.has-hero .nav.scrolled {
 @media (max-width: 980px) {
   .nav-centered .nav-right { display: none !important; }
 }
-@media (max-width: 1080px) { .nav-inner { padding: 18px 36px; } }
-@media (max-width: 640px) { .nav-inner { padding: 14px 22px; } }
+@media (max-width: 640px) { .nav-inner { padding-top: 14px; padding-bottom: 14px; } }
 .nav-links { display: flex; align-items: center; gap: 32px; }
 .nav-links > li { list-style: none; position: relative; }
 .nav-links a {
@@ -529,8 +532,8 @@ body.menu-open { overflow: hidden; touch-action: none; }
   margin: 0;
   padding-top: 60px;
   padding-bottom: 60px;
-  padding-left: clamp(48px, 7vw, 120px);
-  padding-right: clamp(48px, 7vw, 120px);
+  padding-left: var(--content-pad-x);
+  padding-right: var(--content-pad-x);
 }
 .hero-clean h1, .hero-clean .hero-sub, .hero-clean .hero-ctas { max-width: 760px; }
 .hero-clean h1 {
@@ -566,10 +569,10 @@ body.menu-open { overflow: hidden; touch-action: none; }
   .hero-clean .hero-ctas { display: none; }
 }
 @media (max-width: 880px) {
-  /* Hero fills the full mobile viewport — stats peek just at the bottom edge */
+  /* Hero leaves room at the bottom so the rolling stats banner is visible without scrolling */
   .hero {
-    min-height: 100vh;
-    min-height: 100svh; /* iOS Safari safe-area aware */
+    min-height: 88vh;
+    min-height: 88svh; /* iOS Safari safe-area aware */
     padding: 110px 0 44px;
     display: flex;
     align-items: stretch;
@@ -605,7 +608,7 @@ body.menu-open { overflow: hidden; touch-action: none; }
   .hero-grid > div:first-child > .hero-ctas .btn { justify-content: center; padding: 16px 24px; }
 }
 @media (max-width: 480px) {
-  .hero { padding: 100px 0 36px; }
+  .hero { min-height: 85vh; min-height: 85svh; padding: 100px 0 36px; }
   .hero-grid > div:first-child > h1 { margin-bottom: 14px; font-size: clamp(34px, 9vw, 46px); }
   .hero-grid > div:first-child > .hero-sub { font-size: 15px; }
 }
