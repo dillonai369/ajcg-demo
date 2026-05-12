@@ -222,6 +222,13 @@ body.has-hero .nav.scrolled {
   .nav-links { display: none !important; }
   .nav-cta { display: none !important; }
   .nav-burger { display: inline-flex !important; }
+  /* Mobile nav: logo flush-left, burger flush-right via flex */
+  .nav-centered .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
 }
 
 /* ---------- BURGER BUTTON (mobile only) — KPro-style circle ---------- */
@@ -541,9 +548,11 @@ body.menu-open { overflow: hidden; touch-action: none; }
 }
 .hero-clean .hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; }
 @media (max-width: 720px) {
-  .hero-clean-inner { padding-top: 140px; padding-bottom: 60px; text-align: left; }
-  .hero-clean h1 { font-size: clamp(28px, 7vw, 38px); }
-  .hero-clean .hero-sub { font-size: 16px; }
+  .hero-clean-inner { padding-top: 120px; padding-bottom: 40px; text-align: left; }
+  .hero-clean h1 { font-size: clamp(28px, 7.5vw, 38px); line-height: 1.12; margin-bottom: 18px; }
+  .hero-clean .hero-sub { font-size: 15px; line-height: 1.55; margin-bottom: 0; max-width: 100%; }
+  /* Hide the CTA on mobile — headline + subhead only */
+  .hero-clean .hero-ctas { display: none; }
 }
 @media (max-width: 880px) {
   /* Hero fills the full mobile viewport — stats peek just at the bottom edge */
@@ -616,6 +625,66 @@ body.menu-open { overflow: hidden; touch-action: none; }
 @media (max-width: 720px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 36px 20px; }
   .stat-num { font-size: 42px; }
+}
+
+/* ---------- STATS MARQUEE — rolling skinny banner ---------- */
+.stats-marquee {
+  background: var(--navy);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 14px 0;
+  overflow: hidden;
+  position: relative;
+}
+.stats-marquee::before,
+.stats-marquee::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; width: 60px;
+  z-index: 2; pointer-events: none;
+}
+.stats-marquee::before { left: 0; background: linear-gradient(90deg, var(--navy), transparent); }
+.stats-marquee::after  { right: 0; background: linear-gradient(270deg, var(--navy), transparent); }
+.stats-marquee .marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  white-space: nowrap;
+  animation: marquee-scroll 38s linear infinite;
+  will-change: transform;
+}
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.stats-marquee .m-item {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.stats-marquee .m-item strong {
+  color: var(--gold);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 16px;
+  margin-right: 10px;
+  letter-spacing: 0;
+}
+.stats-marquee .m-sep {
+  color: var(--gold);
+  font-size: 7px;
+  opacity: 0.65;
+}
+@media (max-width: 640px) {
+  .stats-marquee { padding: 10px 0; }
+  .stats-marquee::before, .stats-marquee::after { width: 36px; }
+  .stats-marquee .marquee-track { gap: 22px; animation-duration: 30s; }
+  .stats-marquee .m-item { font-size: 12px; letter-spacing: 0.08em; }
+  .stats-marquee .m-item strong { font-size: 13px; margin-right: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stats-marquee .marquee-track { animation: none; }
 }
 
 /* ---------- SOLD GRID / CARDS ---------- */
@@ -1268,3 +1337,81 @@ body.menu-open { overflow: hidden; touch-action: none; }
 
 /* ---------- DROPDOWN HOVER FIX ---------- */
 .nav-links li { padding-bottom: 4px; }
+
+/* =========================================================================
+   MOBILE AUDIT — tighter spacing, scaled type, single-column layouts
+   ========================================================================= */
+
+@media (max-width: 880px) {
+  /* Section padding scaled down ~50% across the board */
+  .sold      { padding: 60px 0; }
+  .founders  { padding: 64px 0; }
+  .insights  { padding: 60px 0; }
+  .testimonial { padding: 60px 0; }
+  .cta-block { padding: 60px 0; }
+  .brand-team { padding: 60px 0; }
+  .services { padding: 60px 0; }
+  .why       { padding: 60px 0; }
+
+  /* Smaller section heads */
+  .sold-head      { margin-bottom: 36px; }
+  .founders-head  { margin-bottom: 36px; }
+  .insights-head  { margin-bottom: 28px; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .culture-head   { margin-bottom: 36px; }
+
+  h2 { font-size: clamp(26px, 6.5vw, 34px); line-height: 1.18; }
+  h3 { font-size: clamp(18px, 4.8vw, 22px); }
+  p  { font-size: 15px; line-height: 1.65; }
+}
+
+@media (max-width: 640px) {
+  /* Even tighter for phones */
+  .sold      { padding: 50px 0; }
+  .founders  { padding: 52px 0; }
+  .insights  { padding: 50px 0; }
+  .testimonial { padding: 50px 0; }
+  .cta-block { padding: 54px 0; }
+
+  /* Sold cards: full-width single column with shorter aspect */
+  .sold-grid { gap: 16px; }
+  .sold-card { min-height: 220px; }
+
+  /* Founders text block + stack reflow to a clean single column */
+  .founders-grid { grid-template-columns: 1fr !important; gap: 36px; }
+  .founders-text p { font-size: 15px; line-height: 1.65; }
+
+  /* Insights cards */
+  .blog-grid { gap: 18px; }
+  .blog-card h3 { font-size: 18px; }
+  .blog-body { padding: 22px; }
+
+  /* CTA block */
+  .cta-grid { gap: 28px; text-align: left; }
+  .cta-actions { width: 100%; }
+  .cta-actions .btn { width: 100%; justify-content: center; }
+
+  /* Testimonial padding */
+  .testimonial-inner { padding: 0 18px; }
+  .testimonial-quote { font-size: 18px; line-height: 1.55; }
+
+  /* Footer tighter */
+  .footer { padding: 50px 0 32px; }
+  .footer-brand p { font-size: 14px; }
+
+  /* Disable subtle hover transforms on touch — no-op for hover events */
+  @media (hover: none) {
+    .founder-card:hover,
+    .team-mini-card:hover,
+    .brand-team-card:hover,
+    .sold-card:hover,
+    .blog-card:hover { transform: none; box-shadow: none; }
+  }
+}
+
+@media (max-width: 480px) {
+  /* Hide the mobile-only nav-burger drop-shadow that can clip */
+  .nav-burger { width: 42px; height: 42px; }
+
+  /* Prevent horizontal overflow from any wide grids */
+  body, html { overflow-x: hidden; }
+}
