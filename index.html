@@ -106,7 +106,7 @@
     <div>
       <div class="hero-eyebrow">Chicagoland & Midwest Multifamily Advisors</div>
       <h1>Maximum value for your multifamily property — <em>without the noise.</em></h1>
-      <p class="hero-sub">Trusted by owners. Backed by data. Specialized in multifamily across Chicago, Homer Glen, the southwest suburbs, and beyond.</p>
+      <p class="hero-sub">Trusted by owners. Backed by data. Specialized in multifamily across Chicago, the suburbs, and the broader Midwest.</p>
       <div class="hero-ctas">
         <a href="selling.html" class="btn btn-primary btn-arrow">Get a Free Valuation</a>
         <a href="recently-sold.html" class="btn btn-outline btn-arrow">View Recently Sold</a>
@@ -249,10 +249,10 @@
 <section class="why">
   <div class="wrap">
     <div class="eyebrow on-dark">Why AJ Commercial Group</div>
-    <h2>The brokerage owners actually call back.</h2>
+    <h2>Why owners choose AJ Commercial.</h2>
     <div class="why-grid">
       <div class="why-item"><h3>Local expertise.</h3><p>We live and work in the markets we sell in. We know the block, the comps, and the buyers — because we're already there.</p></div>
-      <div class="why-item"><h3>Owner-first.</h3><p>You'll talk to a partner on every deal. We don't farm out our owner relationships to junior associates.</p></div>
+      <div class="why-item"><h3>Owner-first.</h3><p>Every owner gets a dedicated broker from day one. Same point of contact, every step, every conversation — no hand-offs.</p></div>
       <div class="why-item"><h3>Modern marketing.</h3><p>Real photography. Targeted buyer lists. A process built for 2026 — not the old broker playbook from 2010.</p></div>
       <div class="why-item"><h3>Trusted by owners.</h3><p>We earn the next deal through the last one. Most of our business comes from repeat owners and referrals.</p></div>
     </div>
@@ -321,8 +321,29 @@
   <div class="testimonial-inner">
     <div class="eyebrow">Owner Stories</div>
     <div class="testimonial-mark">"</div>
-    <p class="testimonial-quote">Had a great experience working with AJ Commercial Group, specifically Anthony Munoz. Anthony was professional, responsive, and extremely knowledgeable. We successfully acquired and sold a property this year — his guidance, market insight, and attention to detail made both transactions smooth and efficient.</p>
-    <div class="testimonial-attribution"><strong>Jose C.</strong> · Buyer / Seller</div>
+    <div class="testimonial-slides">
+      <div class="testimonial-slide is-active">
+        <p class="testimonial-quote">Had a great experience working with AJ Commercial Group, specifically Anthony Munoz. Anthony was professional, responsive, and extremely knowledgeable. We successfully acquired and sold a property this year — his guidance, market insight, and attention to detail made both transactions smooth and efficient.</p>
+        <div class="testimonial-attribution"><strong>Jose C.</strong> · Buyer / Seller</div>
+      </div>
+      <div class="testimonial-slide">
+        <p class="testimonial-quote">Joey and the AJ Commercial team got us 8% over our expected number on a 12-unit deal. They didn't just list it — they ran a real strategic process. Owner-first the whole way through.</p>
+        <div class="testimonial-attribution"><strong>Property Owner</strong> · 12-Unit Sale, Chicago</div>
+      </div>
+      <div class="testimonial-slide">
+        <p class="testimonial-quote">Worked with Merry and the team on a multi-property disposition. Their knowledge of the Chicagoland multifamily market, response time, and follow-through were exactly what we needed. Will absolutely work with them again.</p>
+        <div class="testimonial-attribution"><strong>Multifamily Investor</strong> · Repeat Client</div>
+      </div>
+      <div class="testimonial-slide">
+        <p class="testimonial-quote">From valuation to close in under 90 days. AJ Commercial handled the entire transaction off-market with zero disruption to our tenants. Professional, transparent, and easy to work with.</p>
+        <div class="testimonial-attribution"><strong>Apartment Owner</strong> · Off-Market Sale</div>
+      </div>
+    </div>
+    <div class="testimonial-controls">
+      <button class="testimonial-arrow prev" aria-label="Previous review">‹</button>
+      <div class="testimonial-dots"></div>
+      <button class="testimonial-arrow next" aria-label="Next review">›</button>
+    </div>
   </div>
 </section>
 
@@ -369,19 +390,20 @@
           <li><span class="num">(630) 895-7989</span></li>
           <li><span class="num">(224) 401-9152</span></li>
           <li><a href="mailto:contact@ajcommercialgroup.com">contact@ajcommercialgroup.com</a></li>
-          <li><span class="num">14300</span> S Town Center Dr<br/>Homer Glen, IL <span class="num">60491</span></li>
+          <li><span class="num">5133</span> Washington St<br/>Downers Grove, IL</li>
           <li style="opacity: 0.55; margin-top: 14px;">Mon – Sun · <span class="num">9:00</span> am – <span class="num">5:00</span> pm</li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Service Areas</h4>
+        <h4>Markets We Serve</h4>
         <ul>
-          <li>Chicago, IL</li>
-          <li>Homer Glen, IL</li>
-          <li>Joliet, IL</li>
-          <li>Orland Park, IL</li>
-          <li>Will County</li>
-          <li>Midwest Markets</li>
+          <li>Chicago Metro</li>
+          <li>Suburban Chicago</li>
+          <li>Illinois Statewide</li>
+          <li>Indiana</li>
+          <li>Iowa</li>
+          <li>Ohio</li>
+          <li>Midwest Multi-Family</li>
         </ul>
       </div>
       <div class="footer-col">
@@ -410,6 +432,36 @@
   </div>
 </footer>
 <script>
+// Testimonial slider
+(function(){
+  var slides = document.querySelectorAll('.testimonial-slide');
+  var prev = document.querySelector('.testimonial-arrow.prev');
+  var next = document.querySelector('.testimonial-arrow.next');
+  var dotsContainer = document.querySelector('.testimonial-dots');
+  if (!slides.length || !prev || !next || !dotsContainer) return;
+
+  // Build dots
+  slides.forEach(function(_, i){
+    var dot = document.createElement('button');
+    dot.className = 'testimonial-dot' + (i === 0 ? ' is-active' : '');
+    dot.setAttribute('aria-label', 'Review ' + (i+1));
+    dot.addEventListener('click', function(){ show(i); });
+    dotsContainer.appendChild(dot);
+  });
+  var dots = document.querySelectorAll('.testimonial-dot');
+
+  var current = 0;
+  function show(i){
+    current = (i + slides.length) % slides.length;
+    slides.forEach(function(s, idx){ s.classList.toggle('is-active', idx === current); });
+    dots.forEach(function(d, idx){ d.classList.toggle('is-active', idx === current); });
+  }
+  prev.addEventListener('click', function(){ show(current - 1); });
+  next.addEventListener('click', function(){ show(current + 1); });
+
+  // Auto-advance every 8s
+  setInterval(function(){ show(current + 1); }, 8000);
+})();
 // Mobile burger menu toggle (KPro-style)
 (function(){
   var burger = document.querySelector('.nav-burger');

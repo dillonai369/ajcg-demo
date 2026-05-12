@@ -101,7 +101,7 @@
   <div class="wrap page-header-inner">
     <div class="breadcrumb">Get In Touch</div>
     <h1>Let's talk about your <em>building.</em></h1>
-    <p>Selling, buying, exchanging, or just curious about a number — every conversation goes to a real broker on our team. No call centers, no junior associates working off a script.</p>
+    <p>Selling, buying, exchanging, or just curious about a number — every conversation goes to a real broker on our team.</p>
   </div>
 </section>
 
@@ -133,7 +133,7 @@
 
       <div>
         <div class="eyebrow-line"><span class="eyebrow" style="margin: 0;">Office</span></div>
-        <h2 style="font-size: 32px; margin-bottom: 24px;"><span class="num">14300</span> S Town Center Dr<br/><span style="color: var(--brand-blue);">Homer Glen, IL <span class="num">60491</span></span></h2>
+        <h2 style="font-size: 32px; margin-bottom: 24px;"><span class="num">5133</span> Washington St<br/><span style="color: var(--brand-blue);">Downers Grove, IL</span></h2>
 
         <div style="display: grid; gap: 24px; margin-top: 36px;">
           <div>
@@ -152,7 +152,7 @@
         </div>
 
         <div style="margin-top: 50px; padding: 24px; background: var(--paper); border-radius: var(--radius); border-left: 3px solid var(--brand-blue);">
-          <div style="font-family: var(--serif); font-size: 17px; color: var(--navy); font-weight: 500; line-height: 1.5;">"We respond fast because we care about getting it right — not because we're chasing leads."</div>
+          <div style="font-family: var(--serif); font-size: 17px; color: var(--navy); font-weight: 500; line-height: 1.5;">"Every conversation goes to a real broker — same person, every step. That's how we earn the next deal through the last one."</div>
           <div style="margin-top: 10px; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 600;">— Joey & Anthony, Partners</div>
         </div>
       </div>
@@ -186,19 +186,20 @@
           <li><span class="num">(630) 895-7989</span></li>
           <li><span class="num">(224) 401-9152</span></li>
           <li><a href="mailto:contact@ajcommercialgroup.com">contact@ajcommercialgroup.com</a></li>
-          <li><span class="num">14300</span> S Town Center Dr<br/>Homer Glen, IL <span class="num">60491</span></li>
+          <li><span class="num">5133</span> Washington St<br/>Downers Grove, IL</li>
           <li style="opacity: 0.55; margin-top: 14px;">Mon – Sun · <span class="num">9:00</span> am – <span class="num">5:00</span> pm</li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Service Areas</h4>
+        <h4>Markets We Serve</h4>
         <ul>
-          <li>Chicago, IL</li>
-          <li>Homer Glen, IL</li>
-          <li>Joliet, IL</li>
-          <li>Orland Park, IL</li>
-          <li>Will County</li>
-          <li>Midwest Markets</li>
+          <li>Chicago Metro</li>
+          <li>Suburban Chicago</li>
+          <li>Illinois Statewide</li>
+          <li>Indiana</li>
+          <li>Iowa</li>
+          <li>Ohio</li>
+          <li>Midwest Multi-Family</li>
         </ul>
       </div>
       <div class="footer-col">
@@ -227,6 +228,36 @@
   </div>
 </footer>
 <script>
+// Testimonial slider
+(function(){
+  var slides = document.querySelectorAll('.testimonial-slide');
+  var prev = document.querySelector('.testimonial-arrow.prev');
+  var next = document.querySelector('.testimonial-arrow.next');
+  var dotsContainer = document.querySelector('.testimonial-dots');
+  if (!slides.length || !prev || !next || !dotsContainer) return;
+
+  // Build dots
+  slides.forEach(function(_, i){
+    var dot = document.createElement('button');
+    dot.className = 'testimonial-dot' + (i === 0 ? ' is-active' : '');
+    dot.setAttribute('aria-label', 'Review ' + (i+1));
+    dot.addEventListener('click', function(){ show(i); });
+    dotsContainer.appendChild(dot);
+  });
+  var dots = document.querySelectorAll('.testimonial-dot');
+
+  var current = 0;
+  function show(i){
+    current = (i + slides.length) % slides.length;
+    slides.forEach(function(s, idx){ s.classList.toggle('is-active', idx === current); });
+    dots.forEach(function(d, idx){ d.classList.toggle('is-active', idx === current); });
+  }
+  prev.addEventListener('click', function(){ show(current - 1); });
+  next.addEventListener('click', function(){ show(current + 1); });
+
+  // Auto-advance every 8s
+  setInterval(function(){ show(current + 1); }, 8000);
+})();
 // Mobile burger menu toggle (KPro-style)
 (function(){
   var burger = document.querySelector('.nav-burger');
