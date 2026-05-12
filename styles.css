@@ -548,9 +548,20 @@ body.menu-open { overflow: hidden; touch-action: none; }
 }
 .hero-clean .hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; }
 @media (max-width: 720px) {
-  .hero-clean-inner { padding-top: 120px; padding-bottom: 40px; text-align: left; }
-  .hero-clean h1 { font-size: clamp(28px, 7.5vw, 38px); line-height: 1.12; margin-bottom: 18px; }
-  .hero-clean .hero-sub { font-size: 15px; line-height: 1.55; margin-bottom: 0; max-width: 100%; }
+  .hero-clean-inner { padding-top: 120px; padding-bottom: 44px; text-align: left; }
+  /* Force normal block stacking — h1 above subhead */
+  .hero-clean h1, .hero-clean .hero-sub { display: block; max-width: 100%; }
+  .hero-clean h1 {
+    font-size: clamp(28px, 7.5vw, 38px);
+    line-height: 1.14;
+    margin: 0 0 20px;
+  }
+  .hero-clean .hero-sub {
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+    color: rgba(255,255,255,0.84);
+  }
   /* Hide the CTA on mobile — headline + subhead only */
   .hero-clean .hero-ctas { display: none; }
 }
@@ -563,7 +574,10 @@ body.menu-open { overflow: hidden; touch-action: none; }
     display: flex;
     align-items: stretch;
   }
-  .hero .wrap { width: 100%; display: flex; flex: 1; }
+  /* Old hero-grid (with sidebar) used a flex wrap; the new .hero-clean must remain
+     a normal block container so h1 + subhead stack vertically. */
+  .hero:not(.hero-clean) .wrap { width: 100%; display: flex; flex: 1; }
+  .hero-clean .wrap { width: 100%; display: block; }
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 0;
