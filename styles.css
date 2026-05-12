@@ -657,7 +657,7 @@ body.menu-open { overflow: hidden; touch-action: none; }
   background: var(--navy);
   border-top: 1px solid rgba(255,255,255,0.08);
   border-bottom: 1px solid rgba(255,255,255,0.08);
-  padding: 18px 0;
+  padding: 11px 0;
   overflow: hidden;
   position: relative;
 }
@@ -685,7 +685,7 @@ body.menu-open { overflow: hidden; touch-action: none; }
 }
 .stats-marquee .m-item {
   color: var(--white);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.10em;
   text-transform: uppercase;
@@ -694,8 +694,8 @@ body.menu-open { overflow: hidden; touch-action: none; }
   color: var(--gold);
   font-family: var(--display);
   font-weight: 700;
-  font-size: 22px;
-  margin-right: 12px;
+  font-size: 18px;
+  margin-right: 10px;
   letter-spacing: 0;
 }
 .stats-marquee .m-sep {
