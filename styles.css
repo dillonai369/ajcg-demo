@@ -151,7 +151,7 @@ body.has-hero .nav.scrolled {
 }
 .nav-inner {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 18px clamp(48px, 7vw, 120px); max-width: 1520px; margin: 0 auto;
+  padding: 18px clamp(48px, 7vw, 120px); max-width: none; margin: 0;
 }
 /* Centered nav variant — Interra-style: logo left, links centered, right cluster */
 .nav-centered .nav-inner {
@@ -518,8 +518,8 @@ body.menu-open { overflow: hidden; touch-action: none; }
 .hero-clean { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; }
 .hero-clean .wrap { position: relative; z-index: 2; }
 .hero-clean-inner {
-  max-width: 1520px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   padding-top: 60px;
   padding-bottom: 60px;
   padding-left: clamp(48px, 7vw, 120px);
