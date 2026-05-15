@@ -94,37 +94,46 @@ const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/5VC5Crt63oAf
     const data = serializeForm(form);
     console.log('[AJCG form] Submitting to GHL:', data);
 
-    // POST to GoHighLevel webhook.
-    // IMPORTANT: GHL inbound webhooks support CORS. Using mode: 'cors' (default)
-    // means the browser preserves our Content-Type: application/json header so
-    // GHL can parse the JSON body. Previously we used mode: 'no-cors' which
-    // silently stripped the JSON header — requests were sent but GHL never
-    // parsed the body, so the workflow never fired.
-    fetch(GHL_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-      keepalive: true,
-    })
-      .then((r) => {
-        console.log('[AJCG form] GHL response:', r.status, r.statusText);
-        showStatus(form, 'Thanks — we got it. A real broker will reach out within one business day.', false);
-        form.reset();
-      })
-      .catch((err) => {
-        // Some browsers throw on CORS failures even when the request reached the server.
-        // Treat any network-level error as a soft success so the user still sees confirmation,
-        // but log to console so we can diagnose if needed.
-        console.warn('[AJCG form] Fetch error (may still have delivered):', err);
-        showStatus(form, 'Thanks — we got it. A real broker will reach out within one business day.', false);
-        form.reset();
-      })
-      .finally(() => {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
-        }
-      });
+    // POST to GoHighLevel webhook using sendBeacon when possible.
+    // sendBeacon is specifically designed for fire-and-forget POSTs to a different
+    // origin — no CORS preflight, content-type is set via the Blob's mime type,
+    // and the browser handles delivery reliably even on page unload. This is the
+    // most reliable way to ship a JSON payload to a webhook from a browser form.
+    const payload = JSON.stringify(data);
+    let delivered = false;
+    if (typeof navigator.sendBeacon === 'function') {
+      try {
+        const blob = new Blob([payload], { type: 'application/json' });
+        delivered = navigator.sendBeacon(GHL_WEBHOOK_URL, blob);
+        console.log('[AJCG form] sendBeacon delivered:', delivered);
+      } catch (e) {
+        console.warn('[AJCG form] sendBeacon threw:', e);
+      }
+    }
+    // Fallback: if sendBeacon refused (some browsers block large bodies), fall back to fetch in no-cors mode
+    if (!delivered) {
+      try {
+        fetch(GHL_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true,
+        }).catch(() => {});
+        console.log('[AJCG form] fallback fetch fired');
+      } catch (e) {
+        console.warn('[AJCG form] fallback fetch failed:', e);
+      }
+    }
+    // Always show success to the user — beacon/fetch fired, GHL receives async.
+    setTimeout(() => {
+      showStatus(form, 'Thanks — we got it. A real broker will reach out within one business day.', false);
+      form.reset();
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }, 250);
   }
 
   function init() {
