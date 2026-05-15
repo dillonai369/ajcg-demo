@@ -101,26 +101,27 @@ const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/5VC5Crt63oAf
     // most reliable way to ship a JSON payload to a webhook from a browser form.
     const payload = JSON.stringify(data);
     let delivered = false;
+    // Use text/plain Blob so the request is a "simple" CORS request — no preflight OPTIONS.
+    // GHL's webhook auto-detects the JSON body regardless of the declared Content-Type.
     if (typeof navigator.sendBeacon === 'function') {
       try {
-        const blob = new Blob([payload], { type: 'application/json' });
+        const blob = new Blob([payload], { type: 'text/plain' });
         delivered = navigator.sendBeacon(GHL_WEBHOOK_URL, blob);
         console.log('[AJCG form] sendBeacon delivered:', delivered);
       } catch (e) {
         console.warn('[AJCG form] sendBeacon threw:', e);
       }
     }
-    // Fallback: if sendBeacon refused (some browsers block large bodies), fall back to fetch in no-cors mode
+    // Fallback: fetch in no-cors mode without setting Content-Type so it stays a simple request
     if (!delivered) {
       try {
         fetch(GHL_WEBHOOK_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
           body: payload,
           keepalive: true,
         }).catch(() => {});
-        console.log('[AJCG form] fallback fetch fired');
+        console.log('[AJCG form] fallback fetch fired (no-cors, text/plain default)');
       } catch (e) {
         console.warn('[AJCG form] fallback fetch failed:', e);
       }
