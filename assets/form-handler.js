@@ -61,6 +61,16 @@ const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/5VC5Crt63oAf
         data[key] = value;
       }
     });
+    // Split single 'full_name' or 'name' field into first_name + last_name for GHL.
+    // Forms collect a single name field, but GHL's Create Contact wants first/last separately.
+    const rawName = (data.full_name || data.name || '').toString().trim();
+    if (rawName) {
+      const parts = rawName.split(/\s+/);
+      data.first_name = parts.slice(0, -1).join(' ') || parts[0];
+      data.last_name  = parts.length > 1 ? parts[parts.length - 1] : '';
+      data.name = rawName;        // keep canonical 'name' for SMS/email templates
+      data.full_name = rawName;
+    }
     // Add metadata
     data.form_type = form.dataset.formType || 'unknown';
     data.source = 'ajcommercialgroup.com';
