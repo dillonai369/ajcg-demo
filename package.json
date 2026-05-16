@@ -1,0 +1,10 @@
+{
+  "name": "ajcg-demo",
+  "version": "1.0.0",
+  "description": "AJ Commercial Group website — static site with /api/lead serverless function for GoHighLevel form integration.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}
