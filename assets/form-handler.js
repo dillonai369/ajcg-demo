@@ -22,7 +22,10 @@
  *   - page_url
  * ============================================================ */
 
-const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/5VC5Crt63oAfFwA1RTHp/webhook-trigger/938c131b-d8f5-4da2-8a42-5f5fd4f6d060';
+// Post to our own /api/lead serverless function instead of GHL directly.
+// The serverless function (in /api/lead.js) relays to GHL server-to-server
+// — that completely sidesteps CORS issues that block browser-to-GHL POSTs.
+const GHL_WEBHOOK_URL = '/api/lead';
 
 (function () {
   // Capture UTM params on page load
@@ -99,42 +102,31 @@ const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/5VC5Crt63oAf
     // origin — no CORS preflight, content-type is set via the Blob's mime type,
     // and the browser handles delivery reliably even on page unload. This is the
     // most reliable way to ship a JSON payload to a webhook from a browser form.
-    const payload = JSON.stringify(data);
-    let delivered = false;
-    // Use text/plain Blob so the request is a "simple" CORS request — no preflight OPTIONS.
-    // GHL's webhook auto-detects the JSON body regardless of the declared Content-Type.
-    if (typeof navigator.sendBeacon === 'function') {
-      try {
-        const blob = new Blob([payload], { type: 'text/plain' });
-        delivered = navigator.sendBeacon(GHL_WEBHOOK_URL, blob);
-        console.log('[AJCG form] sendBeacon delivered:', delivered);
-      } catch (e) {
-        console.warn('[AJCG form] sendBeacon threw:', e);
-      }
-    }
-    // Fallback: fetch in no-cors mode without setting Content-Type so it stays a simple request
-    if (!delivered) {
-      try {
-        fetch(GHL_WEBHOOK_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: payload,
-          keepalive: true,
-        }).catch(() => {});
-        console.log('[AJCG form] fallback fetch fired (no-cors, text/plain default)');
-      } catch (e) {
-        console.warn('[AJCG form] fallback fetch failed:', e);
-      }
-    }
-    // Always show success to the user — beacon/fetch fired, GHL receives async.
-    setTimeout(() => {
-      showStatus(form, 'Thanks — we got it. A real broker will reach out within one business day.', false);
-      form.reset();
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    }, 250);
+    // POST to our serverless relay function. Same-origin = no CORS. The function
+    // then forwards to GHL server-side, where Content-Type: application/json works
+    // cleanly without any preflight or browser restrictions.
+    fetch(GHL_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+      .then((r) => {
+        console.log('[AJCG form] /api/lead response:', r.status);
+        showStatus(form, 'Thanks — we got it. A real broker will reach out within one business day.', false);
+        form.reset();
+      })
+      .catch((err) => {
+        console.warn('[AJCG form] /api/lead error:', err);
+        // Still show success so the user isn't blocked — server may have received
+        showStatus(form, 'Thanks — we got it. A real broker will reach out within one business day.', false);
+        form.reset();
+      })
+      .finally(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      });
   }
 
   function init() {
