@@ -1,3 +1,11 @@
-# Demo build — do not index. The actual production AJCG site is ajcommercialgroup.com.
+# AJ Commercial Group — robots.txt
+# Allow all reputable search engines to crawl the production site.
+
 User-agent: *
-Disallow: /
+Allow: /
+
+# Don't index internal previews / drafts.
+Disallow: /ajcg_preview.html
+Disallow: /admin-app-preview.html
+
+Sitemap: https://www.ajcommercialgroup.com/sitemap.xml

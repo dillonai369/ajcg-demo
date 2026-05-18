@@ -1,6 +1,53 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/home", "destination": "/", "permanent": true },
+    { "source": "/home-page", "destination": "/", "permanent": true },
+    { "source": "/index", "destination": "/", "permanent": true },
+
+    { "source": "/about", "destination": "/our-team", "permanent": true },
+    { "source": "/about-us", "destination": "/our-team", "permanent": true },
+    { "source": "/team", "destination": "/our-team", "permanent": true },
+    { "source": "/agents", "destination": "/our-team", "permanent": true },
+    { "source": "/our-agents", "destination": "/our-team", "permanent": true },
+    { "source": "/real-estate-agents", "destination": "/our-team", "permanent": true },
+    { "source": "/real-estate-experts", "destination": "/our-team", "permanent": true },
+    { "source": "/brokers", "destination": "/our-team", "permanent": true },
+
+    { "source": "/contact-us", "destination": "/contact", "permanent": true },
+    { "source": "/get-in-touch", "destination": "/contact", "permanent": true },
+
+    { "source": "/sell", "destination": "/selling", "permanent": true },
+    { "source": "/sell-multifamily", "destination": "/selling", "permanent": true },
+    { "source": "/valuation", "destination": "/selling", "permanent": true },
+    { "source": "/property-valuation", "destination": "/selling", "permanent": true },
+    { "source": "/free-valuation", "destination": "/selling", "permanent": true },
+    { "source": "/multifamily-valuation", "destination": "/selling", "permanent": true },
+
+    { "source": "/buy", "destination": "/buying", "permanent": true },
+    { "source": "/buy-multifamily", "destination": "/buying", "permanent": true },
+    { "source": "/acquisitions", "destination": "/buying", "permanent": true },
+
+    { "source": "/1031", "destination": "/exchange-1031", "permanent": true },
+    { "source": "/1031-exchange", "destination": "/exchange-1031", "permanent": true },
+    { "source": "/exchange", "destination": "/exchange-1031", "permanent": true },
+    { "source": "/tax-deferred-exchange", "destination": "/exchange-1031", "permanent": true },
+
+    { "source": "/jobs", "destination": "/careers", "permanent": true },
+    { "source": "/real-estate-careers", "destination": "/careers", "permanent": true },
+    { "source": "/join-us", "destination": "/careers", "permanent": true },
+
+    { "source": "/news", "destination": "/blog", "permanent": true },
+    { "source": "/insights", "destination": "/blog", "permanent": true },
+    { "source": "/articles", "destination": "/blog", "permanent": true },
+
+    { "source": "/properties", "destination": "/recently-sold", "permanent": true },
+    { "source": "/listings", "destination": "/recently-sold", "permanent": true },
+    { "source": "/sold", "destination": "/recently-sold", "permanent": true },
+    { "source": "/closed-deals", "destination": "/recently-sold", "permanent": true },
+    { "source": "/track-record", "destination": "/recently-sold", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -12,6 +59,20 @@
       "source": "/(.*\\.html)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
       ]
     },
     {
