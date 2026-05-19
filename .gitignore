@@ -30,3 +30,7 @@ property-river-birch.html
 # Local work files
 property_info.txt
 assets/video/hero_old_backup.mp4
+
+# Admin app lives in its own separate repo (ajcg-admin).
+# Keep it out of the marketing-site repo.
+ajcg-admin/
