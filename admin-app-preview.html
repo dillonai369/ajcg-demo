@@ -22,18 +22,19 @@
   body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--ink); margin: 0; }
   .font-serif { font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; }
   .sidebar { background: var(--navy); }
-  .nav-item { color: #94a3b8; transition: all 0.15s; }
-  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.04); }
-  .nav-item.active { color: #fff; background: rgba(200,165,89,0.12); border-left: 2px solid var(--gold); }
+  .nav-item { color: #cbd5e1; transition: all 0.15s; }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.06); }
+  .nav-item.active { color: #fff; background: rgba(200,165,89,0.18); border-left: 2px solid var(--gold); }
   .card { background: white; border: 1px solid var(--line); border-radius: 12px; }
   .stat-up { color: #059669; }
   .stat-down { color: #dc2626; }
-  .pill { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+  .pill { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; display: inline-block; }
   .pill-green { background: #ecfdf5; color: #047857; }
   .pill-amber { background: #fffbeb; color: #b45309; }
   .pill-blue { background: #eff6ff; color: #1d4ed8; }
   .pill-gray { background: #f1f5f9; color: #475569; }
   .pill-red { background: #fef2f2; color: #b91c1c; }
+  .pill-purple { background: #faf5ff; color: #7c3aed; }
   .btn-primary { background: var(--navy); color: white; transition: all 0.15s; }
   .btn-primary:hover { background: var(--navy-2); }
   .btn-gold { background: var(--gold); color: var(--navy); transition: all 0.15s; }
@@ -42,15 +43,28 @@
   .btn-ghost:hover { background: #f1f5f9; color: var(--ink); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .editor-area { min-height: 320px; }
+  .view { display: none; }
+  .view.active { display: block; }
   .upload-zone { border: 2px dashed #cbd5e1; transition: all 0.15s; }
   .upload-zone:hover { border-color: var(--gold); background: #fffdf7; }
   .table-row:hover { background: #f8fafc; cursor: pointer; }
   .ai-glow { background: linear-gradient(135deg, #fef3c7 0%, #f3ead7 100%); border: 1px solid #f5d78b; }
-  .ai-btn { background: linear-gradient(135deg, #1e3358 0%, #2c4a7a 100%); color: white; }
-  .ai-btn:hover { background: linear-gradient(135deg, #142340 0%, #1e3358 100%); }
-  .listing-card { transition: transform 0.15s; }
-  .listing-card:hover { transform: translateY(-2px); }
+  .ai-btn { background: linear-gradient(135deg, #1e3a5f 0%, #34568a 100%); color: white; }
+  .ai-btn:hover { background: linear-gradient(135deg, #1e3a5f 0%, #2a4a73 100%); }
+  .listing-card, .broker-card { transition: transform 0.15s, box-shadow 0.15s; }
+  .listing-card:hover, .broker-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .field-label { font-size: 11px; font-weight: 500; color: #475569; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; display: block; }
+  .field-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: white; }
+  .field-input:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,58,95,0.1); }
+  .section-header { font-size: 13px; font-weight: 600; color: var(--ink); padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .photo-thumb { aspect-ratio: 4/3; background: linear-gradient(135deg, #475569, #1e293b); border-radius: 8px; position: relative; overflow: hidden; }
+  .photo-thumb.hero::after { content: 'HERO'; position: absolute; top: 6px; left: 6px; background: var(--gold); color: var(--navy); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+  .block-editor-block { border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: white; position: relative; transition: all 0.15s; }
+  .block-editor-block:hover { border-color: var(--navy); }
+  .block-handle { position: absolute; left: -28px; top: 14px; color: #94a3b8; cursor: grab; opacity: 0; transition: opacity 0.15s; }
+  .block-editor-block:hover .block-handle { opacity: 1; }
+  .add-block-btn { width: 100%; border: 1px dashed #cbd5e1; padding: 8px; border-radius: 8px; color: #64748b; font-size: 13px; transition: all 0.15s; cursor: pointer; background: white; }
+  .add-block-btn:hover { border-color: var(--navy); color: var(--navy); background: #f8fafc; }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -64,15 +78,9 @@
   <aside class="sidebar w-60 flex-shrink-0 flex flex-col">
     <div class="px-5 py-5 border-b border-white border-opacity-10">
       <div class="flex items-center gap-3">
-        <!-- Logo: tries logo.png first, falls back to logo.svg, then to styled monogram -->
-        <img
-          id="brand-logo"
-          src="assets/logo/logo.png"
-          alt="AJ Commercial Group"
-          class="w-10 h-10 object-contain rounded"
-          style="background: white; padding: 4px;"
-          onerror="this.onerror=null; this.src='logo.svg'; this.addEventListener('error', () => { this.style.display='none'; document.getElementById('brand-fallback').style.display='flex'; }, { once: true });"
-        />
+        <img id="brand-logo" src="logo.png" alt="AJ Commercial Group"
+             class="w-10 h-10 object-contain rounded" style="background: white; padding: 4px;"
+             onerror="this.onerror=null; this.src='logo.svg'; this.addEventListener('error', () => { this.style.display='none'; document.getElementById('brand-fallback').style.display='flex'; }, { once: true });" />
         <div id="brand-fallback" class="w-10 h-10 rounded items-center justify-center flex-shrink-0" style="background: var(--gold); display: none;">
           <span class="font-serif text-lg font-bold" style="color: var(--navy);">AJ</span>
         </div>
@@ -84,42 +92,37 @@
     </div>
 
     <nav class="flex-1 py-4 px-2">
-      <div class="text-xs uppercase tracking-wider text-slate-500 px-3 mb-2">Main</div>
       <a onclick="showTab('overview')" data-tab="overview" class="nav-item active flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview
       </a>
-      <a onclick="showTab('leads')" data-tab="leads" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
-        <i data-lucide="users" class="w-4 h-4"></i> Leads
-        <span class="ml-auto pill pill-amber">12 new</span>
+      <a onclick="showTab('listings')" data-tab="listings" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="building-2" class="w-4 h-4"></i> Listings
+        <span class="ml-auto pill pill-amber">14</span>
       </a>
-      <a onclick="showTab('analytics')" data-tab="analytics" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
-        <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Analytics
+      <a onclick="showTab('blog')" data-tab="blog" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="file-text" class="w-4 h-4"></i> Blog
+      </a>
+      <a onclick="showTab('brokers')" data-tab="brokers" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
+        <i data-lucide="users-round" class="w-4 h-4"></i> Brokers
       </a>
       <a onclick="showTab('seo')" data-tab="seo" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
         <i data-lucide="search" class="w-4 h-4"></i> SEO
       </a>
 
-      <div class="text-xs uppercase tracking-wider text-slate-500 px-3 mb-2 mt-5">Content</div>
-      <a onclick="showTab('listings')" data-tab="listings" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
-        <i data-lucide="building-2" class="w-4 h-4"></i> Listings
-      </a>
-      <a onclick="showTab('blog')" data-tab="blog" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
-        <i data-lucide="file-text" class="w-4 h-4"></i> Blog
-      </a>
-
-      <div class="text-xs uppercase tracking-wider text-slate-500 px-3 mb-2 mt-5">Account</div>
+      <div class="text-xs uppercase tracking-wider text-slate-400 px-3 mb-2 mt-6">Account</div>
       <a onclick="showTab('settings')" data-tab="settings" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded text-sm cursor-pointer">
         <i data-lucide="settings" class="w-4 h-4"></i> Settings
       </a>
     </nav>
 
-    <div class="px-3 py-4 border-t border-white border-opacity-5">
+    <div class="px-3 py-4 border-t border-white border-opacity-10">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-xs font-semibold">JB</div>
         <div class="flex-1 min-w-0">
           <div class="text-white text-xs font-medium truncate">Joey Batliner</div>
-          <div class="text-slate-400 text-xs truncate">Admin</div>
+          <div class="text-slate-300 text-xs truncate">Admin</div>
         </div>
+        <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-slate-400"></i>
       </div>
     </div>
   </aside>
@@ -135,10 +138,7 @@
           <p class="text-sm text-slate-500">Here's what's happening on ajcommercialgroup.com</p>
         </div>
         <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
-          <option>Last 30 days</option>
-          <option>Last 7 days</option>
-          <option>Last 90 days</option>
-          <option>This year</option>
+          <option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option>
         </select>
       </header>
 
@@ -146,23 +146,19 @@
         <div class="grid grid-cols-4 gap-4 mb-6">
           <div class="card p-5">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">New Leads</span>
-              <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
-            </div>
-            <div class="text-3xl font-semibold">47</div>
-            <div class="flex items-center gap-1 text-xs mt-2 stat-up">
-              <i data-lucide="trending-up" class="w-3 h-3"></i> +23% vs last month
-            </div>
-          </div>
-          <div class="card p-5">
-            <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Site Visitors</span>
               <i data-lucide="eye" class="w-4 h-4 text-slate-400"></i>
             </div>
             <div class="text-3xl font-semibold">8,412</div>
-            <div class="flex items-center gap-1 text-xs mt-2 stat-up">
-              <i data-lucide="trending-up" class="w-3 h-3"></i> +11% vs last month
+            <div class="text-xs mt-2 stat-up flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> +11% vs last month</div>
+          </div>
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Form Submissions</span>
+              <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
             </div>
+            <div class="text-3xl font-semibold">47</div>
+            <div class="text-xs mt-2 stat-up flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> +23% vs last month</div>
           </div>
           <div class="card p-5">
             <div class="flex items-center justify-between mb-2">
@@ -178,9 +174,7 @@
               <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
             </div>
             <div class="text-3xl font-semibold">7.4</div>
-            <div class="flex items-center gap-1 text-xs mt-2 stat-up">
-              <i data-lucide="trending-up" class="w-3 h-3"></i> Up 2.1 positions
-            </div>
+            <div class="text-xs mt-2 stat-up flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> Up 2.1 positions</div>
           </div>
         </div>
 
@@ -196,183 +190,805 @@
             <canvas id="trafficChart" height="100"></canvas>
           </div>
           <div class="card p-5">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="font-semibold text-sm">Top pages</h3>
-            </div>
+            <h3 class="font-semibold text-sm mb-4">Top pages</h3>
             <div class="space-y-3">
-              <div class="flex items-center justify-between text-sm">
-                <div class="truncate"><div class="font-medium truncate">Home</div><div class="text-xs text-slate-500">/</div></div>
-                <div class="text-right"><div class="font-medium">3,214</div><div class="text-xs stat-up">+18%</div></div>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <div class="truncate"><div class="font-medium truncate">Sold Listings</div><div class="text-xs text-slate-500">/sold</div></div>
-                <div class="text-right"><div class="font-medium">1,847</div><div class="text-xs stat-up">+34%</div></div>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <div class="truncate"><div class="font-medium truncate">About</div><div class="text-xs text-slate-500">/about</div></div>
-                <div class="text-right"><div class="font-medium">982</div><div class="text-xs stat-up">+6%</div></div>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <div class="truncate"><div class="font-medium truncate">Q1 Market Recap</div><div class="text-xs text-slate-500">/blog/q1-2026...</div></div>
-                <div class="text-right"><div class="font-medium">621</div><div class="text-xs stat-up">+212%</div></div>
-              </div>
-              <div class="flex items-center justify-between text-sm">
-                <div class="truncate"><div class="font-medium truncate">Contact</div><div class="text-xs text-slate-500">/contact</div></div>
-                <div class="text-right"><div class="font-medium">418</div><div class="text-xs stat-down">-4%</div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card overflow-hidden">
-          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
-            <h3 class="font-semibold text-sm">Recent leads</h3>
-            <button onclick="showTab('leads')" class="text-xs font-medium text-slate-600 hover:text-slate-900">View all leads →</button>
-          </div>
-          <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-              <tr>
-                <th class="text-left px-5 py-3 font-medium">Name</th>
-                <th class="text-left px-5 py-3 font-medium">Interest</th>
-                <th class="text-left px-5 py-3 font-medium">Source</th>
-                <th class="text-left px-5 py-3 font-medium">Received</th>
-                <th class="text-left px-5 py-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr class="table-row">
-                <td class="px-5 py-3"><div class="font-medium">Marcus Reynolds</div><div class="text-xs text-slate-500">marcus.r@reynoldscap.com</div></td>
-                <td class="px-5 py-3">Looking to acquire 20+ unit buildings in Logan Square</td>
-                <td class="px-5 py-3"><span class="pill pill-blue">Contact form</span></td>
-                <td class="px-5 py-3 text-slate-500">14 min ago</td>
-                <td class="px-5 py-3"><span class="pill pill-amber">New</span></td>
-              </tr>
-              <tr class="table-row">
-                <td class="px-5 py-3"><div class="font-medium">Priya Shah</div><div class="text-xs text-slate-500">priya@shahre.com</div></td>
-                <td class="px-5 py-3">Listing inquiry: 4421 N Kedzie</td>
-                <td class="px-5 py-3"><span class="pill pill-blue">Listing page</span></td>
-                <td class="px-5 py-3 text-slate-500">2 hrs ago</td>
-                <td class="px-5 py-3"><span class="pill pill-amber">New</span></td>
-              </tr>
-              <tr class="table-row">
-                <td class="px-5 py-3"><div class="font-medium">David Chen</div><div class="text-xs text-slate-500">d.chen@brightoncap.com</div></td>
-                <td class="px-5 py-3">Wants to sell 32-unit in Edgewater</td>
-                <td class="px-5 py-3"><span class="pill pill-blue">Contact form</span></td>
-                <td class="px-5 py-3 text-slate-500">Yesterday</td>
-                <td class="px-5 py-3"><span class="pill pill-green">Contacted</span></td>
-              </tr>
-              <tr class="table-row">
-                <td class="px-5 py-3"><div class="font-medium">Elena Vasquez</div><div class="text-xs text-slate-500">elena@vrealty.io</div></td>
-                <td class="px-5 py-3">Broker collaboration — North Side properties</td>
-                <td class="px-5 py-3"><span class="pill pill-gray">Referral</span></td>
-                <td class="px-5 py-3 text-slate-500">2 days ago</td>
-                <td class="px-5 py-3"><span class="pill pill-green">In progress</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ LEADS ============ -->
-    <div id="tab-leads" class="tab-content">
-      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-semibold">Leads</h1>
-          <p class="text-sm text-slate-500">All form submissions and inquiries from your site</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button class="btn-ghost text-sm px-3 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="download" class="w-4 h-4"></i> Export CSV</button>
-          <button class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Add lead</button>
-        </div>
-      </header>
-
-      <div class="p-8">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="relative flex-1 max-w-md">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" placeholder="Search by name, email, or message..." class="w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900" />
-          </div>
-          <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
-            <option>All sources</option><option>Contact form</option><option>Listing inquiry</option><option>Referral</option>
-          </select>
-          <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
-            <option>All statuses</option><option>New</option><option>Contacted</option><option>In progress</option><option>Closed</option>
-          </select>
-        </div>
-
-        <div class="card overflow-hidden">
-          <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-              <tr>
-                <th class="text-left px-5 py-3 font-medium">Name & email</th>
-                <th class="text-left px-5 py-3 font-medium">Phone</th>
-                <th class="text-left px-5 py-3 font-medium">Message preview</th>
-                <th class="text-left px-5 py-3 font-medium">Source</th>
-                <th class="text-left px-5 py-3 font-medium">Received</th>
-                <th class="text-left px-5 py-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100" id="leads-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ ANALYTICS ============ -->
-    <div id="tab-analytics" class="tab-content">
-      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-semibold">Analytics</h1>
-          <p class="text-sm text-slate-500">Traffic, engagement, and conversion data</p>
-        </div>
-        <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
-          <option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option>
-        </select>
-      </header>
-
-      <div class="p-8 space-y-4">
-        <div class="grid grid-cols-4 gap-4">
-          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Total visitors</div><div class="text-2xl font-semibold">8,412</div><div class="text-xs stat-up mt-1">+11.4%</div></div>
-          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Pageviews</div><div class="text-2xl font-semibold">21,094</div><div class="text-xs stat-up mt-1">+18.2%</div></div>
-          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Avg. session</div><div class="text-2xl font-semibold">2m 47s</div><div class="text-xs stat-up mt-1">+12s</div></div>
-          <div class="card p-5"><div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Conversion rate</div><div class="text-2xl font-semibold">0.56%</div><div class="text-xs stat-up mt-1">+0.08%</div></div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-4">
-          <div class="card p-5 col-span-2">
-            <h3 class="font-semibold text-sm mb-4">Visitors over time</h3>
-            <canvas id="analyticsChart" height="100"></canvas>
-          </div>
-          <div class="card p-5">
-            <h3 class="font-semibold text-sm mb-4">Traffic sources</h3>
-            <canvas id="sourcesChart" height="180"></canvas>
-            <div class="mt-4 space-y-2 text-sm">
-              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-900"></span>Organic search</span><span class="font-medium">42%</span></div>
-              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full" style="background: var(--gold);"></span>Direct</span><span class="font-medium">31%</span></div>
-              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Referral</span><span class="font-medium">18%</span></div>
-              <div class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-400"></span>Social</span><span class="font-medium">9%</span></div>
+              <div class="flex items-center justify-between text-sm"><div class="truncate"><div class="font-medium truncate">Home</div><div class="text-xs text-slate-500">/</div></div><div class="text-right"><div class="font-medium">3,214</div><div class="text-xs stat-up">+18%</div></div></div>
+              <div class="flex items-center justify-between text-sm"><div class="truncate"><div class="font-medium truncate">Sold Listings</div><div class="text-xs text-slate-500">/sold</div></div><div class="text-right"><div class="font-medium">1,847</div><div class="text-xs stat-up">+34%</div></div></div>
+              <div class="flex items-center justify-between text-sm"><div class="truncate"><div class="font-medium truncate">Our Team</div><div class="text-xs text-slate-500">/brokers</div></div><div class="text-right"><div class="font-medium">1,124</div><div class="text-xs stat-up">+22%</div></div></div>
+              <div class="flex items-center justify-between text-sm"><div class="truncate"><div class="font-medium truncate">Q1 Market Recap</div><div class="text-xs text-slate-500">/blog/q1-2026...</div></div><div class="text-right"><div class="font-medium">621</div><div class="text-xs stat-up">+212%</div></div></div>
+              <div class="flex items-center justify-between text-sm"><div class="truncate"><div class="font-medium truncate">Contact</div><div class="text-xs text-slate-500">/contact</div></div><div class="text-right"><div class="font-medium">418</div><div class="text-xs stat-down">-4%</div></div></div>
             </div>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <div class="card p-5">
-            <h3 class="font-semibold text-sm mb-4">Top link clicks</h3>
-            <div class="space-y-3 text-sm">
-              <div class="flex items-center justify-between"><span class="truncate">"View our sold listings" CTA</span><span class="font-medium">412</span></div>
-              <div class="flex items-center justify-between"><span class="truncate">Email — joey@ajcommercial...</span><span class="font-medium">187</span></div>
-              <div class="flex items-center justify-between"><span class="truncate">Phone — (773) 555-0190</span><span class="font-medium">156</span></div>
-              <div class="flex items-center justify-between"><span class="truncate">"Schedule a consultation" CTA</span><span class="font-medium">94</span></div>
-              <div class="flex items-center justify-between"><span class="truncate">LinkedIn — Anthony Munoz</span><span class="font-medium">61</span></div>
+          <div class="card overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+              <h3 class="font-semibold text-sm">Recent activity</h3>
+            </div>
+            <div class="divide-y divide-slate-100">
+              <div class="px-5 py-3 flex items-center gap-3 text-sm">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center"><i data-lucide="building-2" class="w-4 h-4 text-emerald-700"></i></div>
+                <div class="flex-1"><div class="font-medium">New listing published</div><div class="text-xs text-slate-500">4523 N Magnolia Ave · by Joey</div></div>
+                <div class="text-xs text-slate-400">2h ago</div>
+              </div>
+              <div class="px-5 py-3 flex items-center gap-3 text-sm">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 text-blue-700"></i></div>
+                <div class="flex-1"><div class="font-medium">Blog post published</div><div class="text-xs text-slate-500">"5 Things to Look for in a Logan Square 20+ Unit" · by Anthony</div></div>
+                <div class="text-xs text-slate-400">Yesterday</div>
+              </div>
+              <div class="px-5 py-3 flex items-center gap-3 text-sm">
+                <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-amber-700"></i></div>
+                <div class="flex-1"><div class="font-medium">New form submission</div><div class="text-xs text-slate-500">Marcus Reynolds — buyer inquiry</div></div>
+                <div class="text-xs text-slate-400">2 days ago</div>
+              </div>
+              <div class="px-5 py-3 flex items-center gap-3 text-sm">
+                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center"><i data-lucide="users-round" class="w-4 h-4 text-purple-700"></i></div>
+                <div class="flex-1"><div class="font-medium">Broker profile updated</div><div class="text-xs text-slate-500">Anthony Munoz updated bio + photo</div></div>
+                <div class="text-xs text-slate-400">3 days ago</div>
+              </div>
+              <div class="px-5 py-3 flex items-center gap-3 text-sm">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center"><i data-lucide="building-2" class="w-4 h-4 text-emerald-700"></i></div>
+                <div class="flex-1"><div class="font-medium">Listing marked Sold</div><div class="text-xs text-slate-500">4421 N Kedzie Ave · $4.85M</div></div>
+                <div class="text-xs text-slate-400">5 days ago</div>
+              </div>
             </div>
           </div>
-          <div class="card p-5">
-            <h3 class="font-semibold text-sm mb-4">Devices</h3>
-            <div class="space-y-3 text-sm">
-              <div><div class="flex justify-between mb-1"><span>Desktop</span><span class="font-medium">54%</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full" style="width: 54%; background: var(--navy);"></div></div></div>
-              <div><div class="flex justify-between mb-1"><span>Mobile</span><span class="font-medium">41%</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full" style="width: 41%; background: var(--gold);"></div></div></div>
-              <div><div class="flex justify-between mb-1"><span>Tablet</span><span class="font-medium">5%</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-slate-400" style="width: 5%;"></div></div></div>
+
+          <div class="card overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+              <h3 class="font-semibold text-sm">Recent inquiries</h3>
+              <span class="text-xs text-slate-500">From contact form</span>
+            </div>
+            <div class="divide-y divide-slate-100">
+              <div class="px-5 py-3 text-sm">
+                <div class="flex items-center justify-between mb-1"><div class="font-medium">Marcus Reynolds</div><span class="pill pill-amber">New</span></div>
+                <div class="text-xs text-slate-500 mb-1">marcus.r@reynoldscap.com · (312) 555-0142</div>
+                <div class="text-xs text-slate-600">Looking to acquire 20+ unit buildings in Logan Square</div>
+              </div>
+              <div class="px-5 py-3 text-sm">
+                <div class="flex items-center justify-between mb-1"><div class="font-medium">Priya Shah</div><span class="pill pill-amber">New</span></div>
+                <div class="text-xs text-slate-500 mb-1">priya@shahre.com · (773) 555-0188</div>
+                <div class="text-xs text-slate-600">Listing inquiry: 4421 N Kedzie — wanting to tour</div>
+              </div>
+              <div class="px-5 py-3 text-sm">
+                <div class="flex items-center justify-between mb-1"><div class="font-medium">David Chen</div><span class="pill pill-green">Contacted</span></div>
+                <div class="text-xs text-slate-500 mb-1">d.chen@brightoncap.com · (708) 555-0119</div>
+                <div class="text-xs text-slate-600">Wants to sell 32-unit in Edgewater</div>
+              </div>
+              <div class="px-5 py-3 text-sm">
+                <div class="flex items-center justify-between mb-1"><div class="font-medium">Elena Vasquez</div><span class="pill pill-blue">In progress</span></div>
+                <div class="text-xs text-slate-500 mb-1">elena@vrealty.io · (312) 555-0233</div>
+                <div class="text-xs text-slate-600">Broker collaboration — North Side properties</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LISTINGS ============ -->
+    <div id="tab-listings" class="tab-content">
+      <!-- LISTINGS LIST VIEW -->
+      <div id="listings-list" class="view active">
+        <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+          <div>
+            <h1 class="text-xl font-semibold">Listings</h1>
+            <p class="text-sm text-slate-500">Manage active, under contract, and sold properties</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
+              <option>All listings</option><option>For sale</option><option>Under contract</option><option>Sold</option><option>Drafts</option>
+            </select>
+            <button onclick="showView('listings', 'editor')" class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Add listing</button>
+          </div>
+        </header>
+
+        <div class="p-8">
+          <div class="grid grid-cols-3 gap-5" id="listings-grid"></div>
+        </div>
+      </div>
+
+      <!-- LISTINGS EDITOR VIEW -->
+      <div id="listings-editor" class="view">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button onclick="showView('listings', 'list')" class="btn-ghost p-2 rounded-lg"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+            <div>
+              <h1 class="text-lg font-semibold">New listing</h1>
+              <p class="text-xs text-slate-500">Fill in details — publishes to ajcommercialgroup.com/listings</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn-ghost text-sm px-3 py-2 rounded-lg">Save draft</button>
+            <button class="text-sm px-3 py-2 rounded-lg border border-slate-200">Preview</button>
+            <button class="btn-primary text-sm px-4 py-2 rounded-lg font-medium">Publish to site</button>
+          </div>
+        </header>
+
+        <div class="p-8 grid grid-cols-3 gap-6">
+          <div class="col-span-2 space-y-4">
+
+            <!-- PHOTOS -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="image" class="w-4 h-4"></i> Property photos</div>
+              <div class="upload-zone rounded-lg p-8 text-center mb-4 cursor-pointer">
+                <i data-lucide="image-plus" class="w-7 h-7 mx-auto text-slate-400 mb-2"></i>
+                <div class="text-sm font-medium">Drop photos here, or click to upload</div>
+                <div class="text-xs text-slate-500 mt-1">JPG, PNG, HEIC · up to 20MB each · auto-optimized to WebP</div>
+              </div>
+              <div class="grid grid-cols-4 gap-3">
+                <div class="photo-thumb hero"></div>
+                <div class="photo-thumb"></div>
+                <div class="photo-thumb"></div>
+                <div class="photo-thumb"></div>
+                <div class="photo-thumb"></div>
+                <div class="photo-thumb"></div>
+              </div>
+              <p class="text-xs text-slate-500 mt-3 flex items-center gap-1"><i data-lucide="grip-vertical" class="w-3 h-3"></i> Drag to reorder · first photo = hero image</p>
+            </div>
+
+            <!-- PROPERTY DETAILS -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="info" class="w-4 h-4"></i> Property details</div>
+
+              <div class="mb-4">
+                <label class="field-label">Property name</label>
+                <input class="field-input" placeholder="e.g. The Magnolia — 24-Unit Uptown Walkup" value="The Magnolia" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="field-label">Status</label>
+                  <select class="field-input">
+                    <option>Coming Soon</option>
+                    <option>For Sale</option>
+                    <option>Under Contract</option>
+                    <option selected>Sold</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="field-label">Property type</label>
+                  <select class="field-input">
+                    <option selected>Multifamily</option>
+                    <option>Mixed-Use</option>
+                    <option>Retail</option>
+                    <option>Office</option>
+                    <option>Industrial</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="field-label">Street address</label>
+                <input class="field-input" placeholder="4523 N Magnolia Ave" value="4523 N Magnolia Ave" />
+              </div>
+
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label class="field-label">City</label>
+                  <input class="field-input" value="Chicago" />
+                </div>
+                <div>
+                  <label class="field-label">State</label>
+                  <input class="field-input" value="IL" />
+                </div>
+                <div>
+                  <label class="field-label">ZIP</label>
+                  <input class="field-input" value="60640" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="field-label">Neighborhood</label>
+                  <input class="field-input" value="Uptown" />
+                </div>
+                <div>
+                  <label class="field-label">Sub-market</label>
+                  <input class="field-input" placeholder="e.g. Sheridan Park" />
+                </div>
+              </div>
+            </div>
+
+            <!-- BUILDING SPECS -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="ruler" class="w-4 h-4"></i> Building specs</div>
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div><label class="field-label">Total units</label><input class="field-input" value="24" /></div>
+                <div><label class="field-label">Total sqft</label><input class="field-input" value="19,800" /></div>
+                <div><label class="field-label">Lot size (sqft)</label><input class="field-input" value="7,200" /></div>
+              </div>
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div><label class="field-label">Year built</label><input class="field-input" value="1924" /></div>
+                <div><label class="field-label">Stories</label><input class="field-input" value="3" /></div>
+                <div><label class="field-label">Building class</label>
+                  <select class="field-input"><option>Class A</option><option selected>Class B</option><option>Class C</option></select>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-4">
+                <div><label class="field-label">Parking spaces</label><input class="field-input" value="6" /></div>
+                <div><label class="field-label">Heating</label>
+                  <select class="field-input"><option>Boiler / steam</option><option selected>Forced air</option><option>Hydronic</option><option>Other</option></select>
+                </div>
+                <div><label class="field-label">Year renovated</label><input class="field-input" placeholder="—" /></div>
+              </div>
+            </div>
+
+            <!-- FINANCIALS -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="dollar-sign" class="w-4 h-4"></i> Financials</div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div><label class="field-label">Sale price</label><input class="field-input" value="$4,400,000" /></div>
+                <div><label class="field-label">Sale date</label><input type="date" class="field-input" value="2026-04-15" /></div>
+              </div>
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div><label class="field-label">Cap rate</label><input class="field-input" value="6.4%" /></div>
+                <div><label class="field-label">NOI</label><input class="field-input" value="$281,600" /></div>
+                <div><label class="field-label">Gross income</label><input class="field-input" value="$386,400" /></div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div><label class="field-label">Price / unit <span class="text-slate-400">(auto)</span></label><input class="field-input bg-slate-50" value="$183,333" readonly /></div>
+                <div><label class="field-label">Price / sqft <span class="text-slate-400">(auto)</span></label><input class="field-input bg-slate-50" value="$222" readonly /></div>
+              </div>
+            </div>
+
+            <!-- HIGHLIGHTS -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="sparkles" class="w-4 h-4"></i> Highlights / features</div>
+              <p class="text-xs text-slate-500 -mt-3 mb-4">Tap buttons below to add common highlights, or type your own</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="pill pill-blue cursor-pointer">Recently renovated ×</span>
+                <span class="pill pill-blue cursor-pointer">Tuckpointed 2024 ×</span>
+                <span class="pill pill-blue cursor-pointer">New roof ×</span>
+                <span class="pill pill-blue cursor-pointer">Below-market rents ×</span>
+                <span class="pill pill-blue cursor-pointer">Strong unit mix ×</span>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs text-slate-500 w-full mb-1">Quick-add:</span>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ New windows</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Updated kitchens</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Hardwood floors</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Laundry on site</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Garden units</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Separate utilities</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Transit-oriented</button>
+              </div>
+              <input class="field-input" placeholder="Type custom highlight and press Enter..." />
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="align-left" class="w-4 h-4"></i> Description</div>
+              <div class="border border-slate-200 rounded-lg mb-4">
+                <div class="border-b border-slate-200 px-3 py-2 flex items-center gap-1 text-slate-500 text-xs">
+                  <button class="btn-ghost p-1.5 rounded font-bold">B</button>
+                  <button class="btn-ghost p-1.5 rounded italic">I</button>
+                  <button class="btn-ghost p-1.5 rounded underline">U</button>
+                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <textarea class="w-full px-3 py-2 text-sm resize-none focus:outline-none" rows="6">A pristine 24-unit walkup in the heart of Uptown. The Magnolia offers a rare opportunity to acquire a turnkey north-side asset with below-market rents and immediate value-add upside through modest unit renovations.</textarea>
+              </div>
+              <div class="ai-glow rounded-lg p-4 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles" class="w-5 h-5" style="color: var(--gold);"></i></div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium">Generate with Claude</div>
+                  <div class="text-xs text-slate-600">Paste bullet points → polished marketing copy.</div>
+                </div>
+                <button class="ai-btn text-xs px-3 py-2 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIDEBAR -->
+          <div class="space-y-4">
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Listed by</h4>
+              <p class="text-xs text-slate-500 mb-3">Assign one or more brokers</p>
+              <div class="space-y-2 mb-3">
+                <div class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-xs font-semibold">JB</div>
+                  <div class="flex-1 text-sm">Joey Batliner</div>
+                  <button class="btn-ghost p-1 rounded"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <div class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white text-xs font-semibold">AM</div>
+                  <div class="flex-1 text-sm">Anthony Munoz</div>
+                  <button class="btn-ghost p-1 rounded"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                </div>
+              </div>
+              <button class="text-xs btn-ghost border border-slate-200 px-3 py-1.5 rounded-lg w-full flex items-center justify-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> Add broker</button>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Display</h4>
+              <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" checked /> Feature on homepage</label>
+              <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" checked /> Show in sold listings carousel</label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" /> Hide sale price</label>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">SEO</h4>
+              <label class="field-label">URL slug</label>
+              <div class="text-xs font-mono bg-slate-50 border border-slate-200 rounded px-2 py-1.5 mb-3 truncate">/sold/4523-n-magnolia</div>
+              <label class="field-label">Meta title</label>
+              <input class="field-input mb-3" value="4523 N Magnolia · 24-Unit Uptown" />
+              <label class="field-label">Meta description</label>
+              <textarea class="field-input" rows="3">24-unit walkup in Uptown sold for $4.4M (6.4% cap). Multifamily investment sale by AJ Commercial Group.</textarea>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Documents</h4>
+              <p class="text-xs text-slate-500 mb-3">OM, rent roll, T-12 (optional)</p>
+              <button class="text-xs btn-ghost border border-slate-200 px-3 py-2 rounded-lg w-full flex items-center justify-center gap-1"><i data-lucide="upload" class="w-3 h-3"></i> Upload document</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BLOG ============ -->
+    <div id="tab-blog" class="tab-content">
+      <!-- BLOG LIST -->
+      <div id="blog-list" class="view active">
+        <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+          <div>
+            <h1 class="text-xl font-semibold">Blog</h1>
+            <p class="text-sm text-slate-500">Publish articles to ajcommercialgroup.com/blog</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
+              <option>All posts</option><option>Published</option><option>Drafts</option><option>Scheduled</option>
+            </select>
+            <button onclick="showView('blog', 'editor')" class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> New post</button>
+          </div>
+        </header>
+
+        <div class="p-8">
+          <div class="card overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+                <tr>
+                  <th class="text-left px-5 py-3 font-medium">Post</th>
+                  <th class="text-left px-5 py-3 font-medium">Author</th>
+                  <th class="text-left px-5 py-3 font-medium">Status</th>
+                  <th class="text-left px-5 py-3 font-medium">Views</th>
+                  <th class="text-left px-5 py-3 font-medium">Date</th>
+                  <th class="text-left px-5 py-3 font-medium"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100" id="blog-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOG EDITOR -->
+      <div id="blog-editor" class="view">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button onclick="showView('blog', 'list')" class="btn-ghost p-2 rounded-lg"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+            <div>
+              <h1 class="text-lg font-semibold">Edit post</h1>
+              <p class="text-xs text-slate-500">Block-based editor · auto-saves every 5 seconds</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 mr-2 flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> Saved</span>
+            <button class="btn-ghost text-sm px-3 py-2 rounded-lg">Preview</button>
+            <button class="btn-primary text-sm px-4 py-2 rounded-lg font-medium">Publish</button>
+          </div>
+        </header>
+
+        <div class="p-8 grid grid-cols-3 gap-6">
+          <div class="col-span-2 space-y-4">
+
+            <div class="card p-6">
+              <input class="w-full text-3xl font-semibold mb-3 focus:outline-none placeholder-slate-300" placeholder="Post title..." value="Why We Sold $24M of Inventory in Q1 (and What's Coming)" />
+              <input class="w-full text-base text-slate-600 mb-5 focus:outline-none placeholder-slate-300" placeholder="One-line excerpt (shown in card previews + meta description)" value="Inside our record-setting Q1: five north-side closings, $24.3M in volume, and what's next." />
+
+              <label class="field-label">Hero image</label>
+              <div class="upload-zone rounded-lg p-6 text-center cursor-pointer">
+                <i data-lucide="image-plus" class="w-7 h-7 mx-auto text-slate-400 mb-2"></i>
+                <div class="text-sm font-medium">Drop hero image or click to upload</div>
+                <div class="text-xs text-slate-500 mt-1">Recommended 1600×900 · auto-optimized · alt text below</div>
+              </div>
+              <input class="field-input mt-2" placeholder="Alt text — describe the image for SEO + accessibility" />
+            </div>
+
+            <!-- BLOCK EDITOR -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="layout-list" class="w-4 h-4"></i> Content blocks</div>
+              <p class="text-xs text-slate-500 -mt-3 mb-5">Add paragraphs, headings, photos, galleries, quotes, lists — mix and match.</p>
+
+              <div class="space-y-3 ml-7">
+                <div class="block-editor-block">
+                  <i data-lucide="grip-vertical" class="block-handle w-4 h-4"></i>
+                  <div class="flex items-center justify-between mb-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1"><i data-lucide="align-left" class="w-3 h-3"></i> Paragraph</span>
+                    <div class="flex gap-1">
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="copy" class="w-3 h-3"></i></button>
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>
+                  </div>
+                  <textarea class="w-full text-sm leading-relaxed focus:outline-none resize-none" rows="3">It's been a record quarter at AJ Commercial Group. Between mid-January and the end of March, we closed five north-side multifamily transactions totaling $24.3M in volume — a 47% jump over Q1 2025 and our strongest first quarter in the firm's history.</textarea>
+                </div>
+
+                <div class="block-editor-block">
+                  <i data-lucide="grip-vertical" class="block-handle w-4 h-4"></i>
+                  <div class="flex items-center justify-between mb-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1"><i data-lucide="heading-2" class="w-3 h-3"></i> Heading 2</span>
+                    <div class="flex gap-1">
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="copy" class="w-3 h-3"></i></button>
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>
+                  </div>
+                  <input class="w-full text-xl font-semibold focus:outline-none" value="What drove the Q1 surge" />
+                </div>
+
+                <div class="block-editor-block">
+                  <i data-lucide="grip-vertical" class="block-handle w-4 h-4"></i>
+                  <div class="flex items-center justify-between mb-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1"><i data-lucide="image" class="w-3 h-3"></i> Image with caption</span>
+                    <div class="flex gap-1">
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="copy" class="w-3 h-3"></i></button>
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>
+                  </div>
+                  <div class="photo-thumb mb-2" style="aspect-ratio: 16/9;"></div>
+                  <input class="w-full text-xs italic text-slate-500 focus:outline-none" placeholder="Image caption..." value="The Magnolia at 4523 N Magnolia Ave — one of five Q1 closings" />
+                </div>
+
+                <div class="block-editor-block">
+                  <i data-lucide="grip-vertical" class="block-handle w-4 h-4"></i>
+                  <div class="flex items-center justify-between mb-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1"><i data-lucide="grid-3x3" class="w-3 h-3"></i> Photo gallery (3 photos)</span>
+                    <div class="flex gap-1">
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="copy" class="w-3 h-3"></i></button>
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2">
+                    <div class="photo-thumb"></div>
+                    <div class="photo-thumb"></div>
+                    <div class="photo-thumb"></div>
+                  </div>
+                </div>
+
+                <div class="block-editor-block">
+                  <i data-lucide="grip-vertical" class="block-handle w-4 h-4"></i>
+                  <div class="flex items-center justify-between mb-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1"><i data-lucide="quote" class="w-3 h-3"></i> Quote</span>
+                    <div class="flex gap-1">
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="copy" class="w-3 h-3"></i></button>
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>
+                  </div>
+                  <div class="border-l-4 border-amber-400 pl-3">
+                    <textarea class="w-full text-base italic focus:outline-none resize-none" rows="2">"The north-side multifamily market doesn't slow down — it just gets pickier. Buyers want the right asset at the right basis."</textarea>
+                    <input class="w-full text-xs text-slate-500 mt-1 focus:outline-none" placeholder="— Attribution" value="— Joey Batliner, AJ Commercial Group" />
+                  </div>
+                </div>
+
+                <div class="block-editor-block">
+                  <i data-lucide="grip-vertical" class="block-handle w-4 h-4"></i>
+                  <div class="flex items-center justify-between mb-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1"><i data-lucide="list" class="w-3 h-3"></i> Bulleted list</span>
+                    <div class="flex gap-1">
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="copy" class="w-3 h-3"></i></button>
+                      <button class="btn-ghost p-1 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>
+                  </div>
+                  <textarea class="w-full text-sm focus:outline-none resize-none" rows="4">• Logan Square 20-unit · sold to a local fund
+• Edgewater 32-unit · 1031 buyer from California
+• Lincoln Square 18-unit · first-time syndicator
+• Rogers Park 16-unit · long-term family hold
+• Uptown 24-unit · institutional buyer</textarea>
+                </div>
+              </div>
+
+              <!-- ADD BLOCK MENU -->
+              <div class="mt-6">
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="align-left" class="w-3.5 h-3.5"></i> Paragraph</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="heading-2" class="w-3.5 h-3.5"></i> Heading</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Image</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="grid-3x3" class="w-3.5 h-3.5"></i> Gallery</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="quote" class="w-3.5 h-3.5"></i> Quote</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="list" class="w-3.5 h-3.5"></i> List</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="video" class="w-3.5 h-3.5"></i> Video embed</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="minus" class="w-3.5 h-3.5"></i> Divider</button>
+                  <button class="add-block-btn flex items-center justify-center gap-1.5"><i data-lucide="square" class="w-3.5 h-3.5"></i> CTA button</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-glow rounded-lg p-5">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center"><i data-lucide="sparkles" class="w-5 h-5" style="color: var(--gold);"></i></div>
+                <div>
+                  <div class="text-sm font-semibold">Claude Opus 4.6 assist</div>
+                  <div class="text-xs text-slate-600">Polish prose, draft full sections, generate SEO meta, or suggest internal links.</div>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="wand-2" class="w-3.5 h-3.5"></i> Polish selection</button>
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="expand" class="w-3.5 h-3.5"></i> Expand bullets</button>
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="search" class="w-3.5 h-3.5"></i> Generate SEO meta</button>
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="link" class="w-3.5 h-3.5"></i> Suggest internal links</button>
+                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="message-square" class="w-3.5 h-3.5"></i> Draft from transcript</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- BLOG SIDEBAR -->
+          <div class="space-y-4">
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Publish</h4>
+              <div class="flex items-center justify-between text-sm mb-3"><span class="text-slate-600">Status</span><span class="pill pill-amber">Draft</span></div>
+              <div class="flex items-center justify-between text-sm mb-3"><span class="text-slate-600">Visibility</span><select class="text-xs bg-transparent"><option>Public</option><option>Password</option></select></div>
+              <div class="flex items-center justify-between text-sm mb-4"><span class="text-slate-600">Schedule</span><button class="text-xs btn-ghost px-2 py-1 rounded">Now</button></div>
+              <button class="w-full btn-primary text-sm py-2.5 rounded-lg font-semibold mb-2">Publish post</button>
+              <button class="w-full btn-ghost text-sm py-2.5 rounded-lg">Save draft</button>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Author</h4>
+              <div class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-xs font-semibold">JB</div>
+                <div class="flex-1 text-sm">Joey Batliner</div>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+              </div>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">SEO</h4>
+              <label class="field-label">URL slug</label>
+              <input class="field-input text-xs font-mono mb-3" value="why-we-sold-24m-q1-2026" />
+              <label class="field-label">Meta title <span class="text-slate-400 normal-case">(60 char)</span></label>
+              <input class="field-input mb-1" value="Q1 2026 Recap: $24M Sold | AJ Commercial Group" />
+              <div class="text-xs text-slate-400 mb-3 text-right">48 / 60</div>
+              <label class="field-label">Meta description <span class="text-slate-400 normal-case">(160 char)</span></label>
+              <textarea class="field-input" rows="3">Inside our record Q1: five north-side closings, $24.3M in volume, and what's next for Chicagoland multifamily.</textarea>
+              <div class="text-xs text-slate-400 mt-1 text-right">112 / 160</div>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Category</h4>
+              <select class="field-input mb-3">
+                <option>Market Updates</option><option>Investor Insights</option><option>Neighborhood Spotlights</option><option>Recent Deals</option>
+              </select>
+              <h4 class="font-semibold text-sm mb-2">Tags</h4>
+              <div class="flex flex-wrap gap-1 mb-2">
+                <span class="pill pill-gray">Q1 2026 ×</span>
+                <span class="pill pill-gray">Multifamily ×</span>
+                <span class="pill pill-gray">North Side ×</span>
+              </div>
+              <input class="field-input text-xs" placeholder="Add tag..." />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BROKERS ============ -->
+    <div id="tab-brokers" class="tab-content">
+      <!-- BROKERS LIST -->
+      <div id="brokers-list" class="view active">
+        <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
+          <div>
+            <h1 class="text-xl font-semibold">Brokers</h1>
+            <p class="text-sm text-slate-500">Manage broker profiles displayed on the team page</p>
+          </div>
+          <button onclick="showView('brokers', 'editor')" class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Add broker</button>
+        </header>
+
+        <div class="p-8">
+          <div class="grid grid-cols-3 gap-5" id="brokers-grid"></div>
+        </div>
+      </div>
+
+      <!-- BROKERS EDITOR -->
+      <div id="brokers-editor" class="view">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button onclick="showView('brokers', 'list')" class="btn-ghost p-2 rounded-lg"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+            <div>
+              <h1 class="text-lg font-semibold">Edit broker profile</h1>
+              <p class="text-xs text-slate-500">Updates publish to ajcommercialgroup.com/brokers within 30 seconds</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn-ghost text-sm px-3 py-2 rounded-lg">Preview</button>
+            <button class="btn-primary text-sm px-4 py-2 rounded-lg font-medium">Save changes</button>
+          </div>
+        </header>
+
+        <div class="p-8 grid grid-cols-3 gap-6">
+          <div class="col-span-2 space-y-4">
+
+            <!-- HEADSHOT + IDENTITY -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="user-circle" class="w-4 h-4"></i> Headshot & identity</div>
+              <div class="flex gap-5 mb-5">
+                <div>
+                  <div class="w-28 h-28 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white font-serif text-3xl font-bold">JB</div>
+                  <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded mt-2 w-full">Change photo</button>
+                </div>
+                <div class="flex-1">
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div><label class="field-label">First name</label><input class="field-input" value="Joey" /></div>
+                    <div><label class="field-label">Last name</label><input class="field-input" value="Batliner" /></div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div><label class="field-label">Title</label>
+                      <select class="field-input">
+                        <option selected>Partner / Broker</option>
+                        <option>Senior Broker</option>
+                        <option>Broker</option>
+                        <option>Associate Broker</option>
+                        <option>Broker Associate</option>
+                      </select>
+                    </div>
+                    <div><label class="field-label">License #</label><input class="field-input" value="475.171234" /></div>
+                  </div>
+                  <label class="field-label">Tagline <span class="text-slate-400 normal-case">(one line, appears under name)</span></label>
+                  <input class="field-input" value="North-side multifamily specialist · $80M+ closed since 2018" />
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTACT -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="phone" class="w-4 h-4"></i> Contact info</div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div><label class="field-label">Email</label><input class="field-input" value="joey@ajcommercialgroup.com" /></div>
+                <div><label class="field-label">Direct phone</label><input class="field-input" value="(773) 555-0190" /></div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div><label class="field-label">Mobile</label><input class="field-input" value="(312) 555-0190" /></div>
+                <div><label class="field-label">Office phone</label><input class="field-input" value="(773) 555-0100" /></div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div><label class="field-label">LinkedIn URL</label><input class="field-input" value="linkedin.com/in/joseph-batliner-06b386100" /></div>
+                <div><label class="field-label">Crexi profile</label><input class="field-input" placeholder="crexi.com/profile/..." /></div>
+              </div>
+            </div>
+
+            <!-- BIO -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="book-open" class="w-4 h-4"></i> Bio</div>
+              <p class="text-xs text-slate-500 -mt-3 mb-4">Full bio shown on the broker's profile page. Aim for 150–300 words.</p>
+              <div class="border border-slate-200 rounded-lg mb-4">
+                <div class="border-b border-slate-200 px-3 py-2 flex items-center gap-1 text-slate-500 text-xs">
+                  <button class="btn-ghost p-1.5 rounded font-bold">B</button>
+                  <button class="btn-ghost p-1.5 rounded italic">I</button>
+                  <button class="btn-ghost p-1.5 rounded underline">U</button>
+                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
+                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <textarea class="w-full px-3 py-2 text-sm leading-relaxed resize-none focus:outline-none" rows="7">Joey Batliner co-founded AJ Commercial Group in 2020 alongside Anthony Munoz after the two met working at a Chicago brokerage. Today he leads the firm's north-side multifamily practice, focused on Logan Square, Lincoln Square, Uptown, Edgewater, and Rogers Park.
+
+Since launching the firm, Joey has personally closed more than $80M in multifamily sales, working with first-time investors, syndicators, and institutional buyers. He's known for honest underwriting, hustle, and deep neighborhood knowledge.
+
+Outside of brokerage, Joey is an investor himself in multiple Chicago multifamily assets, which gives him an operator's perspective on every deal.</textarea>
+              </div>
+            </div>
+
+            <!-- SPECIALTIES -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="award" class="w-4 h-4"></i> Specialties</div>
+              <p class="text-xs text-slate-500 -mt-3 mb-4">Tap to add areas of expertise. Shown as pills on profile.</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="pill pill-blue cursor-pointer">Multifamily ×</span>
+                <span class="pill pill-blue cursor-pointer">Logan Square ×</span>
+                <span class="pill pill-blue cursor-pointer">Lincoln Square ×</span>
+                <span class="pill pill-blue cursor-pointer">Uptown ×</span>
+                <span class="pill pill-blue cursor-pointer">Edgewater ×</span>
+                <span class="pill pill-blue cursor-pointer">Value-add ×</span>
+                <span class="pill pill-blue cursor-pointer">1031 exchanges ×</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Mixed-use</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Syndications</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Off-market</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ Distressed assets</button>
+                <button class="text-xs btn-ghost border border-slate-200 px-2 py-1 rounded-full">+ First-time buyers</button>
+              </div>
+            </div>
+
+            <!-- BACKGROUND -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="graduation-cap" class="w-4 h-4"></i> Background</div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div><label class="field-label">Years in commercial RE</label><input class="field-input" value="8" /></div>
+                <div><label class="field-label">Joined AJ Commercial</label><input type="date" class="field-input" value="2020-06-01" /></div>
+              </div>
+              <div class="mb-4">
+                <label class="field-label">Education</label>
+                <input class="field-input" value="DePaul University · B.A. Finance" />
+              </div>
+              <div class="mb-4">
+                <label class="field-label">Certifications / designations</label>
+                <input class="field-input" value="Illinois Managing Broker · CCIM candidate" />
+              </div>
+              <div>
+                <label class="field-label">Languages</label>
+                <input class="field-input" value="English" />
+              </div>
+            </div>
+
+            <!-- RECENT DEALS -->
+            <div class="card p-6">
+              <div class="section-header"><i data-lucide="trending-up" class="w-4 h-4"></i> Recent transactions</div>
+              <p class="text-xs text-slate-500 -mt-3 mb-4">Auto-pulled from Listings where this broker is assigned. Toggle which to show on profile.</p>
+              <div class="space-y-2">
+                <label class="flex items-center gap-3 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                  <input type="checkbox" checked />
+                  <div class="flex-1 text-sm">
+                    <div class="font-medium">4421 N Kedzie Ave · Logan Square</div>
+                    <div class="text-xs text-slate-500">28 units · $4.85M · Sold Mar 2026</div>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                  <input type="checkbox" checked />
+                  <div class="flex-1 text-sm">
+                    <div class="font-medium">5919 N Winthrop Ave · Edgewater</div>
+                    <div class="text-xs text-slate-500">32 units · $6.20M · Sold Feb 2026</div>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                  <input type="checkbox" checked />
+                  <div class="flex-1 text-sm">
+                    <div class="font-medium">1638 W Howard St · Rogers Park</div>
+                    <div class="text-xs text-slate-500">16 units · $2.95M · Sold Jan 2026</div>
+                  </div>
+                </label>
+                <label class="flex items-center gap-3 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                  <input type="checkbox" />
+                  <div class="flex-1 text-sm">
+                    <div class="font-medium">3404 N Sheffield Ave · Lakeview</div>
+                    <div class="text-xs text-slate-500">12 units · $2.10M · Sold Dec 2025</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- BROKER SIDEBAR -->
+          <div class="space-y-4">
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Display</h4>
+              <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" checked /> Show on team page</label>
+              <label class="flex items-center gap-2 text-sm mb-2"><input type="checkbox" checked /> Feature on homepage</label>
+              <label class="flex items-center gap-2 text-sm"><input type="checkbox" /> Hide phone numbers</label>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Team page order</h4>
+              <p class="text-xs text-slate-500 mb-3">Drag to reorder on /brokers</p>
+              <select class="field-input">
+                <option selected>1st (top of page)</option><option>2nd</option><option>3rd</option><option>4th</option>
+              </select>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Profile URL</h4>
+              <div class="text-xs font-mono bg-slate-50 border border-slate-200 rounded px-2 py-1.5 truncate">/brokers/joey-batliner</div>
+            </div>
+
+            <div class="card p-5">
+              <h4 class="font-semibold text-sm mb-3">Quick stats <span class="text-xs text-slate-400 font-normal">(shown on profile)</span></h4>
+              <div class="grid grid-cols-2 gap-3 text-sm">
+                <div><label class="field-label">Total $ closed</label><input class="field-input" value="$80M+" /></div>
+                <div><label class="field-label">Units sold</label><input class="field-input" value="450+" /></div>
+                <div><label class="field-label">Deals closed</label><input class="field-input" value="62" /></div>
+                <div><label class="field-label">Avg. days on market</label><input class="field-input" value="41" /></div>
+              </div>
             </div>
           </div>
         </div>
@@ -384,7 +1000,7 @@
       <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
         <div>
           <h1 class="text-xl font-semibold">SEO</h1>
-          <p class="text-sm text-slate-500">Keyword rankings, backlinks, and competitor benchmarks</p>
+          <p class="text-sm text-slate-500">Keyword rankings, top pages, backlinks, and competitor benchmarks</p>
         </div>
         <button class="btn-ghost text-sm px-3 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Track new keyword</button>
       </header>
@@ -398,7 +1014,15 @@
         </div>
 
         <div class="card overflow-hidden">
-          <div class="px-5 py-4 border-b border-slate-200"><h3 class="font-semibold text-sm">Keyword rankings</h3></div>
+          <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 class="font-semibold text-sm">Keyword rankings</h3>
+            <div class="flex items-center gap-2">
+              <input class="text-sm border border-slate-200 rounded-lg px-3 py-1.5" placeholder="Search keywords..." />
+              <select class="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white">
+                <option>All keywords</option><option>Top 10</option><option>Top 20</option><option>Movers</option>
+              </select>
+            </div>
+          </div>
           <table class="w-full text-sm">
             <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
               <tr>
@@ -406,346 +1030,41 @@
                 <th class="text-left px-5 py-3 font-medium">Position</th>
                 <th class="text-left px-5 py-3 font-medium">Change</th>
                 <th class="text-left px-5 py-3 font-medium">Volume / mo</th>
+                <th class="text-left px-5 py-3 font-medium">Difficulty</th>
                 <th class="text-left px-5 py-3 font-medium">Ranking URL</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr><td class="px-5 py-3 font-medium">chicago multifamily broker</td><td class="px-5 py-3">3</td><td class="px-5 py-3 stat-up">▲ 2</td><td class="px-5 py-3">1,300</td><td class="px-5 py-3 text-xs text-slate-500">/services</td></tr>
-              <tr><td class="px-5 py-3 font-medium">logan square apartment building for sale</td><td class="px-5 py-3">2</td><td class="px-5 py-3 stat-up">▲ 5</td><td class="px-5 py-3">720</td><td class="px-5 py-3 text-xs text-slate-500">/sold</td></tr>
-              <tr><td class="px-5 py-3 font-medium">north side chicago commercial real estate</td><td class="px-5 py-3">7</td><td class="px-5 py-3 stat-up">▲ 1</td><td class="px-5 py-3">880</td><td class="px-5 py-3 text-xs text-slate-500">/</td></tr>
-              <tr><td class="px-5 py-3 font-medium">sell my apartment building chicago</td><td class="px-5 py-3">11</td><td class="px-5 py-3 stat-down">▼ 3</td><td class="px-5 py-3">390</td><td class="px-5 py-3 text-xs text-slate-500">/sellers</td></tr>
-              <tr><td class="px-5 py-3 font-medium">chicagoland investment property broker</td><td class="px-5 py-3">5</td><td class="px-5 py-3 stat-up">▲ 4</td><td class="px-5 py-3">260</td><td class="px-5 py-3 text-xs text-slate-500">/about</td></tr>
-              <tr><td class="px-5 py-3 font-medium">edgewater apartment building broker</td><td class="px-5 py-3">4</td><td class="px-5 py-3 stat-up">▲ 6</td><td class="px-5 py-3">170</td><td class="px-5 py-3 text-xs text-slate-500">/sold</td></tr>
-              <tr><td class="px-5 py-3 font-medium">multifamily cap rates chicago 2026</td><td class="px-5 py-3">9</td><td class="px-5 py-3 stat-up">▲ 12</td><td class="px-5 py-3">110</td><td class="px-5 py-3 text-xs text-slate-500">/blog/q1-2026-market-recap</td></tr>
+              <tr><td class="px-5 py-3 font-medium">chicago multifamily broker</td><td class="px-5 py-3 font-semibold">3</td><td class="px-5 py-3 stat-up">▲ 2</td><td class="px-5 py-3">1,300</td><td class="px-5 py-3 text-slate-500">42</td><td class="px-5 py-3 text-xs text-slate-500">/services</td></tr>
+              <tr><td class="px-5 py-3 font-medium">logan square apartment building for sale</td><td class="px-5 py-3 font-semibold">2</td><td class="px-5 py-3 stat-up">▲ 5</td><td class="px-5 py-3">720</td><td class="px-5 py-3 text-slate-500">28</td><td class="px-5 py-3 text-xs text-slate-500">/sold</td></tr>
+              <tr><td class="px-5 py-3 font-medium">north side chicago commercial real estate</td><td class="px-5 py-3 font-semibold">7</td><td class="px-5 py-3 stat-up">▲ 1</td><td class="px-5 py-3">880</td><td class="px-5 py-3 text-slate-500">38</td><td class="px-5 py-3 text-xs text-slate-500">/</td></tr>
+              <tr><td class="px-5 py-3 font-medium">sell my apartment building chicago</td><td class="px-5 py-3 font-semibold">11</td><td class="px-5 py-3 stat-down">▼ 3</td><td class="px-5 py-3">390</td><td class="px-5 py-3 text-slate-500">35</td><td class="px-5 py-3 text-xs text-slate-500">/sellers</td></tr>
+              <tr><td class="px-5 py-3 font-medium">chicagoland investment property broker</td><td class="px-5 py-3 font-semibold">5</td><td class="px-5 py-3 stat-up">▲ 4</td><td class="px-5 py-3">260</td><td class="px-5 py-3 text-slate-500">29</td><td class="px-5 py-3 text-xs text-slate-500">/about</td></tr>
+              <tr><td class="px-5 py-3 font-medium">edgewater apartment building broker</td><td class="px-5 py-3 font-semibold">4</td><td class="px-5 py-3 stat-up">▲ 6</td><td class="px-5 py-3">170</td><td class="px-5 py-3 text-slate-500">22</td><td class="px-5 py-3 text-xs text-slate-500">/sold</td></tr>
+              <tr><td class="px-5 py-3 font-medium">multifamily cap rates chicago 2026</td><td class="px-5 py-3 font-semibold">9</td><td class="px-5 py-3 stat-up">▲ 12</td><td class="px-5 py-3">110</td><td class="px-5 py-3 text-slate-500">31</td><td class="px-5 py-3 text-xs text-slate-500">/blog/q1-2026-market-recap</td></tr>
+              <tr><td class="px-5 py-3 font-medium">uptown apartment investment</td><td class="px-5 py-3 font-semibold">6</td><td class="px-5 py-3 stat-up">▲ 3</td><td class="px-5 py-3">90</td><td class="px-5 py-3 text-slate-500">18</td><td class="px-5 py-3 text-xs text-slate-500">/sold</td></tr>
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
 
-    <!-- ============ LISTINGS ============ -->
-    <div id="tab-listings" class="tab-content">
-      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-semibold">Listings</h1>
-          <p class="text-sm text-slate-500">Manage active and sold listings displayed on your site</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <select class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white">
-            <option>All listings</option><option>Active</option><option>Sold</option><option>Drafts</option>
-          </select>
-          <button onclick="showListingEditor()" class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Add listing</button>
-        </div>
-      </header>
-
-      <div id="listings-grid" class="p-8">
-        <div class="grid grid-cols-3 gap-5">
-          <div class="card listing-card overflow-hidden">
-            <div class="h-44 bg-gradient-to-br from-slate-700 to-slate-900 relative flex items-center justify-center">
-              <div class="absolute top-3 left-3 pill" style="background: rgba(0,0,0,0.6); color: white;">SOLD</div>
-              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">12 photos</div>
-              <span class="text-slate-500 text-xs">[Listing photo]</span>
-            </div>
-            <div class="p-4">
-              <div class="text-xs text-slate-500 mb-1">Logan Square · Sold Mar 2026</div>
-              <div class="font-semibold text-sm mb-1">4421 N Kedzie Ave</div>
-              <div class="text-xs text-slate-600 mb-3">28-unit · 22,400 sqft · 6.2% cap</div>
-              <div class="flex items-center justify-between">
-                <div class="font-semibold">$4.85M</div>
-                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-              </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="card p-5">
+            <h3 class="font-semibold text-sm mb-4">Top performing pages (SEO)</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex items-center justify-between"><span class="truncate"><strong>Sold listings</strong> · /sold</span><span class="font-medium">12 keywords</span></div>
+              <div class="flex items-center justify-between"><span class="truncate"><strong>Services</strong> · /services</span><span class="font-medium">8 keywords</span></div>
+              <div class="flex items-center justify-between"><span class="truncate"><strong>Q1 Recap blog</strong> · /blog/...</span><span class="font-medium">6 keywords</span></div>
+              <div class="flex items-center justify-between"><span class="truncate"><strong>About</strong> · /about</span><span class="font-medium">4 keywords</span></div>
+              <div class="flex items-center justify-between"><span class="truncate"><strong>Home</strong> · /</span><span class="font-medium">3 keywords</span></div>
             </div>
           </div>
-          <div class="card listing-card overflow-hidden">
-            <div class="h-44 bg-gradient-to-br from-amber-700 to-amber-900 relative flex items-center justify-center">
-              <div class="absolute top-3 left-3 pill" style="background: rgba(0,0,0,0.6); color: white;">SOLD</div>
-              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">9 photos</div>
-              <span class="text-amber-200 text-xs">[Listing photo]</span>
-            </div>
-            <div class="p-4">
-              <div class="text-xs text-slate-500 mb-1">Edgewater · Sold Feb 2026</div>
-              <div class="font-semibold text-sm mb-1">5919 N Winthrop Ave</div>
-              <div class="text-xs text-slate-600 mb-3">32-unit · 28,100 sqft · 6.8% cap</div>
-              <div class="flex items-center justify-between">
-                <div class="font-semibold">$6.20M</div>
-                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-              </div>
-            </div>
-          </div>
-          <div class="card listing-card overflow-hidden">
-            <div class="h-44 bg-gradient-to-br from-emerald-800 to-emerald-950 relative flex items-center justify-center">
-              <div class="absolute top-3 left-3 pill pill-green">ACTIVE</div>
-              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">14 photos</div>
-              <span class="text-emerald-200 text-xs">[Listing photo]</span>
-            </div>
-            <div class="p-4">
-              <div class="text-xs text-slate-500 mb-1">Lincoln Square · Listed Apr 2026</div>
-              <div class="font-semibold text-sm mb-1">4810 N Western Ave</div>
-              <div class="text-xs text-slate-600 mb-3">18-unit · 16,200 sqft · 6.5% cap</div>
-              <div class="flex items-center justify-between">
-                <div class="font-semibold">$3.65M</div>
-                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-              </div>
-            </div>
-          </div>
-          <div class="card listing-card overflow-hidden">
-            <div class="h-44 bg-gradient-to-br from-slate-600 to-slate-800 relative flex items-center justify-center">
-              <div class="absolute top-3 left-3 pill pill-green">ACTIVE</div>
-              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">11 photos</div>
-              <span class="text-slate-400 text-xs">[Listing photo]</span>
-            </div>
-            <div class="p-4">
-              <div class="text-xs text-slate-500 mb-1">Uptown · Listed Apr 2026</div>
-              <div class="font-semibold text-sm mb-1">4523 N Magnolia Ave</div>
-              <div class="text-xs text-slate-600 mb-3">24-unit · 19,800 sqft · 6.4% cap</div>
-              <div class="flex items-center justify-between">
-                <div class="font-semibold">$4.40M</div>
-                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-              </div>
-            </div>
-          </div>
-          <div class="card listing-card overflow-hidden">
-            <div class="h-44 bg-gradient-to-br from-stone-700 to-stone-900 relative flex items-center justify-center">
-              <div class="absolute top-3 left-3 pill" style="background: rgba(0,0,0,0.6); color: white;">SOLD</div>
-              <div class="absolute bottom-3 right-3 text-white text-xs font-medium">8 photos</div>
-              <span class="text-stone-400 text-xs">[Listing photo]</span>
-            </div>
-            <div class="p-4">
-              <div class="text-xs text-slate-500 mb-1">Rogers Park · Sold Jan 2026</div>
-              <div class="font-semibold text-sm mb-1">1638 W Howard St</div>
-              <div class="text-xs text-slate-600 mb-3">16-unit · 14,400 sqft · 7.1% cap</div>
-              <div class="flex items-center justify-between">
-                <div class="font-semibold">$2.95M</div>
-                <button onclick="showListingEditor()" class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-              </div>
-            </div>
-          </div>
-          <div onclick="showListingEditor()" class="card listing-card overflow-hidden cursor-pointer flex items-center justify-center" style="min-height: 280px; border-style: dashed;">
-            <div class="text-center p-6">
-              <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3"><i data-lucide="plus" class="w-6 h-6 text-slate-400"></i></div>
-              <div class="font-medium text-sm">Add a new listing</div>
-              <div class="text-xs text-slate-500 mt-1">Photos + details auto-publish to your site</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="listing-editor" class="p-8" style="display:none;">
-        <button onclick="hideListingEditor()" class="btn-ghost text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to listings</button>
-        <div class="grid grid-cols-3 gap-5">
-          <div class="col-span-2 space-y-4">
-            <div class="card p-6">
-              <h3 class="font-semibold mb-1">New listing</h3>
-              <p class="text-xs text-slate-500 mb-5">Will appear on /listings within 30 seconds of publishing</p>
-
-              <label class="block text-xs font-medium text-slate-600 mb-1.5">Property name</label>
-              <input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-4" placeholder="e.g. The Magnolia — 24-Unit Uptown Walkup" />
-
-              <label class="block text-xs font-medium text-slate-600 mb-1.5">Street address</label>
-              <input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-4" placeholder="4523 N Magnolia Ave, Chicago IL 60640" />
-
-              <div class="grid grid-cols-3 gap-3 mb-4">
-                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Sale price</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="$4,400,000" /></div>
-                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Units</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="24" /></div>
-                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Cap rate</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="6.4%" /></div>
-              </div>
-
-              <div class="grid grid-cols-3 gap-3 mb-4">
-                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Square footage</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="19,800" /></div>
-                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Year built</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="1924" /></div>
-                <div><label class="block text-xs font-medium text-slate-600 mb-1.5">Neighborhood</label><input class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="Uptown" /></div>
-              </div>
-
-              <label class="block text-xs font-medium text-slate-600 mb-1.5">Property photos</label>
-              <div class="upload-zone rounded-lg p-8 text-center mb-4 cursor-pointer">
-                <i data-lucide="image-plus" class="w-7 h-7 mx-auto text-slate-400 mb-2"></i>
-                <div class="text-sm font-medium">Drop photos here, or click to upload</div>
-                <div class="text-xs text-slate-500 mt-1">First photo becomes the hero image · auto-optimized to WebP</div>
-              </div>
-
-              <label class="block text-xs font-medium text-slate-600 mb-1.5">Description</label>
-              <div class="border border-slate-200 rounded-lg mb-4">
-                <div class="border-b border-slate-200 px-3 py-2 flex items-center gap-1 text-slate-500 text-xs">
-                  <button class="btn-ghost p-1.5 rounded font-bold">B</button>
-                  <button class="btn-ghost p-1.5 rounded italic">I</button>
-                  <button class="btn-ghost p-1.5 rounded underline">U</button>
-                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
-                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
-                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
-                </div>
-                <textarea class="w-full px-3 py-2 text-sm resize-none focus:outline-none" rows="6" placeholder="A pristine 24-unit walkup in the heart of Uptown..."></textarea>
-              </div>
-
-              <div class="ai-glow rounded-lg p-4 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles" class="w-5 h-5" style="color: var(--gold);"></i></div>
-                <div class="flex-1">
-                  <div class="text-sm font-medium">Generate description with Claude</div>
-                  <div class="text-xs text-slate-600">Drop in bullet points or unit details — get polished marketing copy in seconds.</div>
-                </div>
-                <button class="ai-btn text-xs px-3 py-2 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <div class="card p-5">
-              <h4 class="font-semibold text-sm mb-3">Status</h4>
-              <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-3">
-                <option>Draft</option><option>Active — for sale</option><option>Under contract</option><option selected>Sold</option>
-              </select>
-              <label class="block text-xs font-medium text-slate-600 mb-1.5">Sale date</label>
-              <input type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-3" />
-              <label class="flex items-center gap-2 text-sm mt-3"><input type="checkbox" checked /> Feature on homepage</label>
-            </div>
-
-            <div class="card p-5">
-              <h4 class="font-semibold text-sm mb-3">Publish settings</h4>
-              <div class="text-xs text-slate-500 mb-3">URL slug</div>
-              <div class="text-xs font-mono bg-slate-50 border border-slate-200 rounded px-2 py-1.5 mb-3 truncate">/sold/4523-n-magnolia</div>
-              <button class="w-full btn-primary text-sm py-2.5 rounded-lg font-semibold mb-2">Publish to site</button>
-              <button class="w-full btn-ghost text-sm py-2.5 rounded-lg">Save as draft</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ BLOG ============ -->
-    <div id="tab-blog" class="tab-content">
-      <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-semibold">Blog</h1>
-          <p class="text-sm text-slate-500">Publish articles to ajcommercialgroup.com/blog</p>
-        </div>
-        <button onclick="showBlogEditor()" class="btn-primary text-sm px-4 py-2 rounded-lg flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> New post</button>
-      </header>
-
-      <div id="blog-list" class="p-8">
-        <div class="card overflow-hidden">
-          <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-              <tr>
-                <th class="text-left px-5 py-3 font-medium">Title</th>
-                <th class="text-left px-5 py-3 font-medium">Status</th>
-                <th class="text-left px-5 py-3 font-medium">Views</th>
-                <th class="text-left px-5 py-3 font-medium">Published</th>
-                <th class="text-left px-5 py-3 font-medium"></th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr class="table-row" onclick="showBlogEditor()">
-                <td class="px-5 py-4"><div class="font-medium">Chicagoland Q1 2026 Multifamily Market Recap</div><div class="text-xs text-slate-500 mt-0.5">Cap rates compressed slightly on north-side trades while...</div></td>
-                <td class="px-5 py-4"><span class="pill pill-green">Published</span></td>
-                <td class="px-5 py-4">621</td>
-                <td class="px-5 py-4 text-slate-500">Apr 12, 2026</td>
-                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
-              </tr>
-              <tr class="table-row" onclick="showBlogEditor()">
-                <td class="px-5 py-4"><div class="font-medium">5 Things to Look for in a Logan Square 20+ Unit Building</div><div class="text-xs text-slate-500 mt-0.5">From boiler condition to tuckpointing — the seasoned investor's checklist...</div></td>
-                <td class="px-5 py-4"><span class="pill pill-green">Published</span></td>
-                <td class="px-5 py-4">387</td>
-                <td class="px-5 py-4 text-slate-500">Mar 28, 2026</td>
-                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
-              </tr>
-              <tr class="table-row" onclick="showBlogEditor()">
-                <td class="px-5 py-4"><div class="font-medium">Why We Sold $24M of Inventory in Q1 (and What's Coming)</div><div class="text-xs text-slate-500 mt-0.5">A look behind the scenes at our brokerage approach...</div></td>
-                <td class="px-5 py-4"><span class="pill pill-amber">Draft</span></td>
-                <td class="px-5 py-4">—</td>
-                <td class="px-5 py-4 text-slate-500">—</td>
-                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
-              </tr>
-              <tr class="table-row" onclick="showBlogEditor()">
-                <td class="px-5 py-4"><div class="font-medium">Edgewater vs. Uptown: Where Are Cap Rates Heading?</div><div class="text-xs text-slate-500 mt-0.5">Side-by-side neighborhood analysis based on 18 months of trades...</div></td>
-                <td class="px-5 py-4"><span class="pill pill-green">Published</span></td>
-                <td class="px-5 py-4">512</td>
-                <td class="px-5 py-4 text-slate-500">Feb 14, 2026</td>
-                <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="blog-editor" class="p-8" style="display:none;">
-        <button onclick="hideBlogEditor()" class="btn-ghost text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to all posts</button>
-        <div class="grid grid-cols-3 gap-5">
-          <div class="col-span-2 space-y-4">
-            <div class="card p-6">
-              <input class="w-full text-2xl font-semibold mb-4 focus:outline-none" placeholder="Post title" value="Why We Sold $24M of Inventory in Q1 (and What's Coming)" />
-              <div class="upload-zone rounded-lg p-6 text-center mb-5 cursor-pointer">
-                <i data-lucide="image-plus" class="w-7 h-7 mx-auto text-slate-400 mb-2"></i>
-                <div class="text-sm font-medium">Add a hero image</div>
-                <div class="text-xs text-slate-500 mt-1">Recommended 1600x900</div>
-              </div>
-              <div class="border border-slate-200 rounded-lg">
-                <div class="border-b border-slate-200 px-3 py-2 flex items-center gap-1 text-slate-500 text-xs">
-                  <select class="text-xs bg-transparent mr-2"><option>Paragraph</option><option>Heading 1</option><option>Heading 2</option></select>
-                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
-                  <button class="btn-ghost p-1.5 rounded font-bold">B</button>
-                  <button class="btn-ghost p-1.5 rounded italic">I</button>
-                  <button class="btn-ghost p-1.5 rounded underline">U</button>
-                  <div class="h-4 w-px bg-slate-200 mx-1"></div>
-                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
-                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="list-ordered" class="w-3.5 h-3.5"></i></button>
-                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="quote" class="w-3.5 h-3.5"></i></button>
-                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
-                  <button class="btn-ghost p-1.5 rounded"><i data-lucide="image" class="w-3.5 h-3.5"></i></button>
-                </div>
-                <div class="editor-area p-4 text-sm leading-relaxed">
-                  <p class="mb-3">It's been a record quarter at AJ Commercial Group. Between mid-January and the end of March, we closed five north-side multifamily transactions totaling $24.3M in volume — a 47% jump over Q1 2025 and our strongest first quarter in the firm's history.</p>
-                  <p class="mb-3">A few questions we've been getting from buyers and sellers...</p>
-                  <p class="text-slate-400">[ Continue writing or use AI to draft a section → ]</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="ai-glow rounded-lg p-5">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center"><i data-lucide="sparkles" class="w-5 h-5" style="color: var(--gold);"></i></div>
-                <div>
-                  <div class="text-sm font-semibold">Claude Opus 4.6 assist</div>
-                  <div class="text-xs text-slate-600">Polish prose, expand bullet points into paragraphs, or generate SEO meta.</div>
-                </div>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="wand-2" class="w-3.5 h-3.5"></i> Polish selection</button>
-                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="expand" class="w-3.5 h-3.5"></i> Expand bullets</button>
-                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="search" class="w-3.5 h-3.5"></i> Generate SEO meta</button>
-                <button class="ai-btn text-xs px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5"><i data-lucide="link" class="w-3.5 h-3.5"></i> Suggest internal links</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <div class="card p-5">
-              <h4 class="font-semibold text-sm mb-3">Publish</h4>
-              <div class="flex items-center justify-between text-sm mb-3"><span class="text-slate-600">Status</span><span class="pill pill-amber">Draft</span></div>
-              <div class="flex items-center justify-between text-sm mb-3"><span class="text-slate-600">Visibility</span><select class="text-xs bg-transparent"><option>Public</option><option>Password</option><option>Private</option></select></div>
-              <div class="flex items-center justify-between text-sm mb-4"><span class="text-slate-600">Schedule</span><button class="text-xs btn-ghost px-2 py-1 rounded">Immediately</button></div>
-              <button class="w-full btn-primary text-sm py-2.5 rounded-lg font-semibold mb-2">Publish post</button>
-              <button class="w-full btn-ghost text-sm py-2.5 rounded-lg">Save draft</button>
-            </div>
-
-            <div class="card p-5">
-              <h4 class="font-semibold text-sm mb-3">SEO</h4>
-              <label class="block text-xs font-medium text-slate-600 mb-1">URL slug</label>
-              <input class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-mono mb-3" value="why-we-sold-24m-q1-2026" />
-              <label class="block text-xs font-medium text-slate-600 mb-1">Meta title</label>
-              <input class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs mb-3" value="Q1 2026 Recap: $24M Sold | AJ Commercial Group" />
-              <label class="block text-xs font-medium text-slate-600 mb-1">Meta description</label>
-              <textarea class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs" rows="3">Inside our record-setting Q1: five north-side closings, $24.3M in volume, and what's next for Chicagoland multifamily.</textarea>
-            </div>
-
-            <div class="card p-5">
-              <h4 class="font-semibold text-sm mb-3">Category & tags</h4>
-              <select class="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs mb-3">
-                <option>Market Updates</option><option>Investor Insights</option><option>Neighborhood Spotlights</option>
-              </select>
-              <div class="flex flex-wrap gap-1">
-                <span class="pill pill-gray">Q1 2026</span>
-                <span class="pill pill-gray">Multifamily</span>
-                <span class="pill pill-gray">North Side</span>
-              </div>
+          <div class="card p-5">
+            <h3 class="font-semibold text-sm mb-4">Recent backlinks</h3>
+            <div class="space-y-3 text-sm">
+              <div><div class="font-medium truncate">traded.co</div><div class="text-xs text-slate-500">"AJ Commercial Group closes $4.85M deal..." · DA 64</div></div>
+              <div><div class="font-medium truncate">crexi.com</div><div class="text-xs text-slate-500">Brokerage profile listing · DA 71</div></div>
+              <div><div class="font-medium truncate">connectcre.com</div><div class="text-xs text-slate-500">Chicago multifamily market article · DA 58</div></div>
+              <div><div class="font-medium truncate">therealdeal.com</div><div class="text-xs text-slate-500">North side closings roundup · DA 79</div></div>
             </div>
           </div>
         </div>
@@ -779,40 +1098,20 @@
 
         <div class="card p-6">
           <h3 class="font-semibold mb-1">Connected services</h3>
-          <p class="text-xs text-slate-500 mb-4">Data sources feeding your dashboard</p>
+          <p class="text-xs text-slate-500 mb-4">Data sources powering this dashboard</p>
           <div class="space-y-3">
-            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
-              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-semibold">GHL</div>
-              <div class="flex-1"><div class="text-sm font-medium">GoHighLevel</div><div class="text-xs text-slate-500">Marketing site + form submissions</div></div>
-              <span class="pill pill-green">Connected</span>
-            </div>
-            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
-              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div>
-              <div class="flex-1"><div class="text-sm font-medium">Plausible Analytics</div><div class="text-xs text-slate-500">Page views, link clicks, visitor data</div></div>
-              <span class="pill pill-green">Connected</span>
-            </div>
-            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
-              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="search" class="w-5 h-5"></i></div>
-              <div class="flex-1"><div class="text-sm font-medium">DataForSEO</div><div class="text-xs text-slate-500">Keyword ranks, backlinks, competitor data</div></div>
-              <span class="pill pill-green">Connected</span>
-            </div>
-            <div class="flex items-center gap-3 py-2 border-b border-slate-100">
-              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
-              <div class="flex-1"><div class="text-sm font-medium">Claude (Anthropic API)</div><div class="text-xs text-slate-500">AI drafting for blogs and listings</div></div>
-              <span class="pill pill-green">Connected</span>
-            </div>
-            <div class="flex items-center gap-3 py-2">
-              <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="image" class="w-5 h-5"></i></div>
-              <div class="flex-1"><div class="text-sm font-medium">Cloudinary</div><div class="text-xs text-slate-500">Image hosting + auto-optimization</div></div>
-              <span class="pill pill-green">Connected</span>
-            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100"><div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-semibold">GHL</div><div class="flex-1"><div class="text-sm font-medium">GoHighLevel</div><div class="text-xs text-slate-500">Marketing site + form submissions</div></div><span class="pill pill-green">Connected</span></div>
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100"><div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div><div class="flex-1"><div class="text-sm font-medium">Plausible Analytics</div><div class="text-xs text-slate-500">Page views + visitor data</div></div><span class="pill pill-green">Connected</span></div>
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100"><div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="search" class="w-5 h-5"></i></div><div class="flex-1"><div class="text-sm font-medium">DataForSEO</div><div class="text-xs text-slate-500">Keyword ranks + backlinks</div></div><span class="pill pill-green">Connected</span></div>
+            <div class="flex items-center gap-3 py-2 border-b border-slate-100"><div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="sparkles" class="w-5 h-5"></i></div><div class="flex-1"><div class="text-sm font-medium">Claude (Anthropic API)</div><div class="text-xs text-slate-500">AI drafting for blogs + listings</div></div><span class="pill pill-green">Connected</span></div>
+            <div class="flex items-center gap-3 py-2"><div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i data-lucide="image" class="w-5 h-5"></i></div><div class="flex-1"><div class="text-sm font-medium">Cloudinary</div><div class="text-xs text-slate-500">Image hosting + optimization</div></div><span class="pill pill-green">Connected</span></div>
           </div>
         </div>
 
         <div class="card p-6">
           <h3 class="font-semibold mb-1">Notifications</h3>
-          <p class="text-xs text-slate-500 mb-4">Email alerts for new leads and milestones</p>
-          <label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" checked /> New lead notifications (instant)</label>
+          <p class="text-xs text-slate-500 mb-4">Email alerts</p>
+          <label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" checked /> New form submission (instant)</label>
           <label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" checked /> Weekly performance summary (Mondays)</label>
           <label class="flex items-center gap-3 py-2 text-sm"><input type="checkbox" /> Keyword rank changes (top 10 only)</label>
         </div>
@@ -827,121 +1126,173 @@
 
   function showTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    const el = document.getElementById('tab-' + tab);
-    if (el) el.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const navEl = document.querySelector(`[data-tab="${tab}"]`);
     if (navEl) navEl.classList.add('active');
-    if (tab === 'analytics') setTimeout(initAnalyticsCharts, 60);
+    // Reset to list view when switching tabs
+    ['listings','blog','brokers'].forEach(t => {
+      const list = document.getElementById(t + '-list');
+      const editor = document.getElementById(t + '-editor');
+      if (list && editor) { list.classList.add('active'); editor.classList.remove('active'); }
+    });
     refreshIcons();
   }
 
-  function showBlogEditor() {
-    document.getElementById('blog-list').style.display = 'none';
-    document.getElementById('blog-editor').style.display = 'block';
+  function showView(tab, view) {
+    document.getElementById(tab + '-list').classList.toggle('active', view === 'list');
+    document.getElementById(tab + '-editor').classList.toggle('active', view === 'editor');
     refreshIcons();
-  }
-  function hideBlogEditor() {
-    document.getElementById('blog-list').style.display = 'block';
-    document.getElementById('blog-editor').style.display = 'none';
-  }
-  function showListingEditor() {
-    document.getElementById('listings-grid').style.display = 'none';
-    document.getElementById('listing-editor').style.display = 'block';
-    refreshIcons();
-  }
-  function hideListingEditor() {
-    document.getElementById('listings-grid').style.display = 'block';
-    document.getElementById('listing-editor').style.display = 'none';
   }
 
-  const leads = [
-    { name: 'Marcus Reynolds', email: 'marcus.r@reynoldscap.com', phone: '(312) 555-0142', msg: 'Looking to acquire 20+ unit buildings in Logan Square', source: 'Contact form', received: '14 min ago', status: 'new' },
-    { name: 'Priya Shah', email: 'priya@shahre.com', phone: '(773) 555-0188', msg: 'Listing inquiry: 4421 N Kedzie — wanting to tour', source: 'Listing page', received: '2 hrs ago', status: 'new' },
-    { name: 'David Chen', email: 'd.chen@brightoncap.com', phone: '(708) 555-0119', msg: 'Wants to sell 32-unit in Edgewater', source: 'Contact form', received: 'Yesterday', status: 'contacted' },
-    { name: 'Elena Vasquez', email: 'elena@vrealty.io', phone: '(312) 555-0233', msg: 'Broker collaboration — North Side properties', source: 'Referral', received: '2 days ago', status: 'progress' },
-    { name: 'James OBrien', email: 'jobrien@1031partners.com', phone: '(872) 555-0144', msg: '1031 exchange — need replacement property by Jul', source: 'Listing page', received: '3 days ago', status: 'progress' },
-    { name: 'Sofia Marchetti', email: 'sofia@marchettifund.com', phone: '(312) 555-0177', msg: 'Fund acquiring 50-100 unit assets in Chicagoland', source: 'Contact form', received: '4 days ago', status: 'contacted' },
-    { name: 'Kevin Park', email: 'kpark@parkcap.com', phone: '(773) 555-0166', msg: 'First-time buyer — 8-12 units in Lakeview', source: 'Contact form', received: '5 days ago', status: 'closed' },
-    { name: 'Rachel Goldberg', email: 'rachel@goldbergco.com', phone: '(312) 555-0125', msg: 'Sold 4-flat with you in 2024, looking again', source: 'Referral', received: '1 week ago', status: 'progress' },
+  // Sample data
+  const listings = [
+    { hood: 'Logan Square', status: 'sold', date: 'Mar 2026', addr: '4421 N Kedzie Ave', units: 28, sqft: '22,400', cap: '6.2%', price: '$4.85M', grad: 'from-slate-700 to-slate-900' },
+    { hood: 'Edgewater', status: 'sold', date: 'Feb 2026', addr: '5919 N Winthrop Ave', units: 32, sqft: '28,100', cap: '6.8%', price: '$6.20M', grad: 'from-amber-700 to-amber-900' },
+    { hood: 'Lincoln Square', status: 'active', date: 'Listed Apr 2026', addr: '4810 N Western Ave', units: 18, sqft: '16,200', cap: '6.5%', price: '$3.65M', grad: 'from-emerald-800 to-emerald-950' },
+    { hood: 'Uptown', status: 'active', date: 'Listed Apr 2026', addr: '4523 N Magnolia Ave', units: 24, sqft: '19,800', cap: '6.4%', price: '$4.40M', grad: 'from-slate-600 to-slate-800' },
+    { hood: 'Rogers Park', status: 'sold', date: 'Jan 2026', addr: '1638 W Howard St', units: 16, sqft: '14,400', cap: '7.1%', price: '$2.95M', grad: 'from-stone-700 to-stone-900' },
+    { hood: 'Lakeview', status: 'pending', date: 'Listed Mar 2026', addr: '3404 N Sheffield Ave', units: 12, sqft: '11,200', cap: '5.9%', price: '$2.10M', grad: 'from-indigo-800 to-indigo-950' },
   ];
-  const statusPills = {
-    new: '<span class="pill pill-amber">New</span>',
-    contacted: '<span class="pill pill-green">Contacted</span>',
-    progress: '<span class="pill pill-blue">In progress</span>',
-    closed: '<span class="pill pill-gray">Closed</span>',
-  };
-  function populateLeads() {
-    const tbody = document.getElementById('leads-tbody');
+  function statusPill(s) {
+    if (s === 'sold') return '<div class="absolute top-3 left-3 pill" style="background: rgba(0,0,0,0.7); color: white;">SOLD</div>';
+    if (s === 'active') return '<div class="absolute top-3 left-3 pill pill-green">FOR SALE</div>';
+    if (s === 'pending') return '<div class="absolute top-3 left-3 pill pill-amber">UNDER CONTRACT</div>';
+    return '';
+  }
+  function populateListings() {
+    const grid = document.getElementById('listings-grid');
+    if (!grid) return;
+    grid.innerHTML = listings.map(l => `
+      <div class="card listing-card overflow-hidden cursor-pointer" onclick="showView('listings','editor')">
+        <div class="h-44 bg-gradient-to-br ${l.grad} relative flex items-center justify-center">
+          ${statusPill(l.status)}
+          <div class="absolute bottom-3 right-3 text-white text-xs font-medium opacity-80">12 photos</div>
+          <span class="text-slate-300 text-xs">[Listing photo]</span>
+        </div>
+        <div class="p-4">
+          <div class="text-xs text-slate-500 mb-1">${l.hood} · ${l.date}</div>
+          <div class="font-semibold text-sm mb-1">${l.addr}</div>
+          <div class="text-xs text-slate-600 mb-3">${l.units}-unit · ${l.sqft} sqft · ${l.cap} cap</div>
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">${l.price}</div>
+            <button class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+          </div>
+        </div>
+      </div>
+    `).join('') + `
+      <div onclick="showView('listings','editor')" class="card listing-card overflow-hidden cursor-pointer flex items-center justify-center" style="min-height: 280px; border-style: dashed;">
+        <div class="text-center p-6">
+          <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3"><i data-lucide="plus" class="w-6 h-6 text-slate-400"></i></div>
+          <div class="font-medium text-sm">Add a new listing</div>
+          <div class="text-xs text-slate-500 mt-1">Auto-publishes to your site</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const blogPosts = [
+    { title: 'Chicagoland Q1 2026 Multifamily Market Recap', excerpt: 'Cap rates compressed slightly on north-side trades while...', author: 'Joey', avatar: 'JB', status: 'published', views: 621, date: 'Apr 12, 2026' },
+    { title: '5 Things to Look for in a Logan Square 20+ Unit Building', excerpt: 'From boiler condition to tuckpointing — the seasoned investor\'s checklist...', author: 'Anthony', avatar: 'AM', status: 'published', views: 387, date: 'Mar 28, 2026' },
+    { title: 'Why We Sold $24M of Inventory in Q1 (and What\'s Coming)', excerpt: 'A look behind the scenes at our brokerage approach...', author: 'Joey', avatar: 'JB', status: 'draft', views: '—', date: '—' },
+    { title: 'Edgewater vs. Uptown: Where Are Cap Rates Heading?', excerpt: 'Side-by-side neighborhood analysis based on 18 months of trades...', author: 'Joey', avatar: 'JB', status: 'published', views: 512, date: 'Feb 14, 2026' },
+    { title: 'The 1031 Buyer\'s Guide to Chicago Multifamily', excerpt: 'Timing, identification rules, and which neighborhoods make sense...', author: 'Anthony', avatar: 'AM', status: 'scheduled', views: '—', date: 'May 22, 2026' },
+  ];
+  function statusPostPill(s) {
+    if (s === 'published') return '<span class="pill pill-green">Published</span>';
+    if (s === 'draft') return '<span class="pill pill-amber">Draft</span>';
+    if (s === 'scheduled') return '<span class="pill pill-purple">Scheduled</span>';
+    return '';
+  }
+  function populateBlog() {
+    const tbody = document.getElementById('blog-tbody');
     if (!tbody) return;
-    tbody.innerHTML = leads.map(l => `
-      <tr class="table-row">
-        <td class="px-5 py-3"><div class="font-medium">${l.name}</div><div class="text-xs text-slate-500">${l.email}</div></td>
-        <td class="px-5 py-3 text-slate-600">${l.phone}</td>
-        <td class="px-5 py-3 max-w-xs"><div class="truncate text-slate-600">${l.msg}</div></td>
-        <td class="px-5 py-3"><span class="pill pill-blue">${l.source}</span></td>
-        <td class="px-5 py-3 text-slate-500">${l.received}</td>
-        <td class="px-5 py-3">${statusPills[l.status]}</td>
+    tbody.innerHTML = blogPosts.map(p => `
+      <tr class="table-row" onclick="showView('blog','editor')">
+        <td class="px-5 py-4">
+          <div class="font-medium">${p.title}</div>
+          <div class="text-xs text-slate-500 mt-0.5">${p.excerpt}</div>
+        </td>
+        <td class="px-5 py-4"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-gradient-to-br from-slate-500 to-slate-700 text-white text-xs flex items-center justify-center font-semibold">${p.avatar}</div><span class="text-sm">${p.author}</span></div></td>
+        <td class="px-5 py-4">${statusPostPill(p.status)}</td>
+        <td class="px-5 py-4 text-sm">${p.views}</td>
+        <td class="px-5 py-4 text-sm text-slate-500">${p.date}</td>
+        <td class="px-5 py-4 text-right"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i></td>
       </tr>
     `).join('');
   }
 
-  let trafficChartInstance, analyticsChartInstance, sourcesChartInstance;
+  const brokers = [
+    { first: 'Joey', last: 'Batliner', initials: 'JB', title: 'Partner / Broker', tagline: 'North-side multifamily specialist', email: 'joey@ajcommercialgroup.com', phone: '(773) 555-0190', closed: '$80M+', deals: 62, grad: 'from-amber-400 to-amber-600' },
+    { first: 'Anthony', last: 'Munoz', initials: 'AM', title: 'Partner / Broker', tagline: 'Investment sales + 1031 specialist', email: 'anthony@ajcommercialgroup.com', phone: '(773) 555-0191', closed: '$72M+', deals: 54, grad: 'from-slate-600 to-slate-800' },
+  ];
+  function populateBrokers() {
+    const grid = document.getElementById('brokers-grid');
+    if (!grid) return;
+    grid.innerHTML = brokers.map(b => `
+      <div class="card broker-card overflow-hidden cursor-pointer" onclick="showView('brokers','editor')">
+        <div class="p-5 text-center border-b border-slate-100">
+          <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br ${b.grad} flex items-center justify-center text-white font-serif text-2xl font-bold mb-3">${b.initials}</div>
+          <div class="font-semibold">${b.first} ${b.last}</div>
+          <div class="text-xs text-slate-500">${b.title}</div>
+          <div class="text-xs text-slate-600 mt-2 italic">${b.tagline}</div>
+        </div>
+        <div class="px-5 py-3 text-xs space-y-1">
+          <div class="flex items-center gap-2 text-slate-600"><i data-lucide="mail" class="w-3.5 h-3.5"></i> ${b.email}</div>
+          <div class="flex items-center gap-2 text-slate-600"><i data-lucide="phone" class="w-3.5 h-3.5"></i> ${b.phone}</div>
+        </div>
+        <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <div><span class="text-slate-500">Closed:</span> <span class="font-semibold">${b.closed}</span></div>
+          <div><span class="text-slate-500">Deals:</span> <span class="font-semibold">${b.deals}</span></div>
+          <button class="btn-ghost p-1.5 rounded"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+        </div>
+      </div>
+    `).join('') + `
+      <div onclick="showView('brokers','editor')" class="card broker-card overflow-hidden cursor-pointer flex items-center justify-center" style="min-height: 320px; border-style: dashed;">
+        <div class="text-center p-6">
+          <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3"><i data-lucide="user-plus" class="w-6 h-6 text-slate-400"></i></div>
+          <div class="font-medium text-sm">Add a broker</div>
+          <div class="text-xs text-slate-500 mt-1">Auto-publishes to /brokers</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Charts
+  let trafficChartInstance;
   function initCharts() {
     const ctx = document.getElementById('trafficChart');
     if (!ctx || trafficChartInstance) return;
     const labels = Array.from({length: 30}, (_, i) => `${i + 1}`);
     const visitorsData = [180,210,195,240,260,310,295,280,320,355,340,380,360,395,420,400,440,460,430,475,490,510,495,540,560,590,570,610,640,680];
-    const formsData = visitorsData.map(v => Math.round(v * 0.012));
     trafficChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels,
         datasets: [
-          { label: 'Visitors', data: visitorsData, borderColor: '#0a1628', backgroundColor: 'rgba(10,22,40,0.06)', fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2 },
-          { label: 'Form fills', data: formsData.map(v => v * 25), borderColor: '#c8a559', backgroundColor: 'transparent', tension: 0.35, pointRadius: 0, borderWidth: 2, borderDash: [4,4] },
+          { label: 'Visitors', data: visitorsData, borderColor: '#1e3a5f', backgroundColor: 'rgba(30,58,95,0.06)', fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2 },
+          { label: 'Form fills', data: visitorsData.map(v => Math.round(v * 0.3)), borderColor: '#c8a559', backgroundColor: 'transparent', tension: 0.35, pointRadius: 0, borderWidth: 2, borderDash: [4,4] },
         ]
       },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } },
-          y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8' } }
-        }
+      options: { responsive: true, plugins: { legend: { display: false } },
+        scales: { x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } }, y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8' } } }
       }
     });
   }
-  function initAnalyticsCharts() {
-    const ctx1 = document.getElementById('analyticsChart');
-    if (ctx1 && !analyticsChartInstance) {
-      const labels = Array.from({length: 30}, (_, i) => `${i + 1}`);
-      analyticsChartInstance = new Chart(ctx1, {
-        type: 'bar',
-        data: { labels, datasets: [{ label: 'Visitors', data: [220,260,245,280,310,360,340,320,370,400,385,425,405,445,470,455,490,510,485,525,545,570,555,595,615,640,625,670,695,725], backgroundColor: '#0a1628', borderRadius: 3, barThickness: 8 }] },
-        options: { plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } }, y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8' } } } }
-      });
-    }
-    const ctx2 = document.getElementById('sourcesChart');
-    if (ctx2 && !sourcesChartInstance) {
-      sourcesChartInstance = new Chart(ctx2, {
-        type: 'doughnut',
-        data: { labels: ['Organic search','Direct','Referral','Social'], datasets: [{ data: [42,31,18,9], backgroundColor: ['#0a1628','#c8a559','#3b82f6','#94a3b8'], borderWidth: 0 }] },
-        options: { plugins: { legend: { display: false } }, cutout: '65%' }
-      });
-    }
-  }
 
-  // Initialize on load
+  // Init
   window.addEventListener('DOMContentLoaded', () => {
     refreshIcons();
+    populateListings();
+    populateBlog();
+    populateBrokers();
     initCharts();
-    populateLeads();
   });
-  // Fallback if event already fired
   refreshIcons();
+  populateListings();
+  populateBlog();
+  populateBrokers();
   initCharts();
-  populateLeads();
 </script>
 </body>
 </html>
