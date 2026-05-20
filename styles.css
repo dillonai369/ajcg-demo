@@ -563,11 +563,12 @@ body.menu-open { overflow: hidden; touch-action: none; }
   .hero-clean .hero-sub {
     font-size: 15px;
     line-height: 1.6;
-    margin: 0;
+    margin: 0 0 28px;
     color: rgba(255,255,255,0.84);
   }
-  /* Hide the CTA on mobile — headline + subhead only */
-  .hero-clean .hero-ctas { display: none; }
+  /* Show the CTA on mobile (full-width, clean) */
+  .hero-clean .hero-ctas { display: flex; flex-direction: column; gap: 12px; }
+  .hero-clean .hero-ctas .btn { justify-content: center; padding: 14px 22px; font-size: 14px; }
 }
 @media (max-width: 880px) {
   /* Hero + marquee together fill exactly one viewport — no white peeking below */
