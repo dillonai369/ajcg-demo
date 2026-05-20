@@ -563,12 +563,27 @@ body.menu-open { overflow: hidden; touch-action: none; }
   .hero-clean .hero-sub {
     font-size: 15px;
     line-height: 1.6;
-    margin: 0 0 28px;
+    margin: 0 0 24px;
     color: rgba(255,255,255,0.84);
   }
-  /* Show the CTA on mobile (full-width, clean) */
-  .hero-clean .hero-ctas { display: flex; flex-direction: column; gap: 12px; }
-  .hero-clean .hero-ctas .btn { justify-content: center; padding: 14px 22px; font-size: 14px; }
+  /* Show the CTA on mobile — small, right-aligned, "Get a Free Valuation" only */
+  .hero-clean .hero-ctas {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .hero-clean .hero-ctas .btn {
+    padding: 11px 18px;
+    font-size: 13px;
+  }
+}
+
+/* Hero CTA visibility — outline "View Recently Sold" on desktop, primary "Get a Free Valuation" on mobile */
+.hero-cta-mobile { display: none; }
+.hero-cta-desktop { display: inline-flex; }
+@media (max-width: 720px) {
+  .hero-cta-desktop { display: none; }
+  .hero-cta-mobile { display: inline-flex; }
 }
 @media (max-width: 880px) {
   /* Hero + marquee together fill exactly one viewport — no white peeking below */
