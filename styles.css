@@ -441,8 +441,9 @@ body.menu-open { overflow: hidden; touch-action: none; }
 .page-header.with-team-photo {
   background:
     linear-gradient(180deg, rgba(15,26,46,0.55) 0%, rgba(15,26,46,0.80) 100%),
-    url('assets/team/IMG_4604.jpg') center 25%/cover,
+    url('assets/team/IMG_4588.jpg') center center/cover,
     linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 60%, var(--navy-light) 100%);
+  min-height: 520px;
 }
 .page-header-inner { position: relative; z-index: 2; text-align: center; }
 .page-header h1 { color: var(--white); margin-bottom: 18px; font-weight: 500; }

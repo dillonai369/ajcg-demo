@@ -276,13 +276,13 @@
         <div class="eyebrow-line"><span class="eyebrow" style="margin: 0;">For Multifamily Owners</span></div>
         <h2>What we do for sellers.</h2>
       </div>
-      <p>We specialize in advising multifamily owners through every kind of disposition — quietly, strategically, and with maximum upside. Here's how we work.</p>
+      <p>We specialize in advising multifamily owners through every kind of disposition — on-market, off-market, and everything in between. Strategic, fast-moving, and built for maximum upside. Here's how we work.</p>
     </div>
     <div class="services-grid">
       <div class="service-card">
-        <div class="service-num">01 / Off-Market Sales</div>
-        <h3>Off-market sales.</h3>
-        <p>Quietly connect with our network of vetted, qualified buyers — no public listing, no tenant disruption, no "for sale" signs. Often the cleanest path to a strong number.</p>
+        <div class="service-num">01 / On-Market & Off-Market</div>
+        <h3>The right path for your building.</h3>
+        <p>Some assets are best sold quietly to our network of vetted buyers. Others win bigger with a sharp, well-positioned listing campaign. We tailor the route to your building — and on either path, we move fast and protect your tenants.</p>
       </div>
       <div class="service-card">
         <div class="service-num">02 / Maximum Valuation</div>
@@ -295,9 +295,9 @@
         <p>Preserve equity. Defer capital gains. We help you map the sequence — disposition, identification, replacement — before the clock starts running on day one.</p>
       </div>
       <div class="service-card">
-        <div class="service-num">04 / Confidential Process</div>
-        <h3>Confidential, every step.</h3>
-        <p>Tenants don't know. Lenders don't know. Until you decide they should. Most of our deals close before they ever hit the open market.</p>
+        <div class="service-num">04 / Discreet & Fast</div>
+        <h3>Discreet by default. Fast by design.</h3>
+        <p>Whether off-market or a tightly run listing, we keep your tenants undisturbed and the process tight from first conversation to close — no unnecessary noise, no dragged-out timelines.</p>
       </div>
     </div>
   </div>
@@ -557,18 +557,7 @@
     if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
   });
 })();
-// Toggle .scrolled on the nav once the hero is out of view (homepage only)
-(function(){
-  if (!document.body.classList.contains('has-hero')) return;
-  var nav = document.querySelector('.nav');
-  if (!nav) return;
-  function check(){
-    if (window.scrollY > window.innerHeight * 0.6) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
-  }
-  check();
-  window.addEventListener('scroll', check, { passive: true });
-})();
+// Nav scroll behavior moved to assets/nav-scroll.js so it runs on every page
 (function(){
   function animateCounter(el){
     if (el.dataset.animated) return;
@@ -611,6 +600,7 @@
 })();
 </script>
 <script src="assets/form-handler.js"></script>
+<script src="assets/nav-scroll.js"></script>
 <script src="assets/scroll-reveal.js"></script>
 </body>
 </html>
