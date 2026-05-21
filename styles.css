@@ -1540,3 +1540,20 @@ body.menu-open { overflow: hidden; touch-action: none; }
     transform: translateY(0);
   }
 }
+
+/* ============================================================
+   BOT HONEYPOT — invisible to humans, auto-filled by spam bots.
+   Positioned off-screen instead of display:none because some bots
+   skip display:none elements. Also aria-hidden + tabindex=-1 on
+   the input so screen readers and keyboard users never see it.
+============================================================ */
+.hp-trap {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}

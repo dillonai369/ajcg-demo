@@ -80,6 +80,9 @@ const GHL_WEBHOOK_URL = '/api/lead';
     data.submitted_at = new Date().toISOString();
     data.page_url = window.location.href;
     data.referrer = document.referrer || '';
+    // Bot protection: include the page-load timestamp so the server can detect
+    // submissions that happen too fast (< 2 seconds). Set by init() below.
+    data.__form_loaded_at = window.__formLoadedAt || Date.now();
     Object.assign(data, utm);
     return data;
   }
@@ -130,6 +133,8 @@ const GHL_WEBHOOK_URL = '/api/lead';
   }
 
   function init() {
+    // Stamp page load time once — used server-side for the bot time-check.
+    if (!window.__formLoadedAt) window.__formLoadedAt = Date.now();
     document.querySelectorAll('form[data-ghl="true"]').forEach((form) => {
       form.addEventListener('submit', handleSubmit);
     });
