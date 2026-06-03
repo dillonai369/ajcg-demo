@@ -16,7 +16,7 @@
   <url><loc>https://www.ajcommercialgroup.com/blog</loc><lastmod>2026-06-03</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/careers</loc><lastmod>2026-06-03</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
 
-  <!-- Broker pages — medium priority -->
+  <!-- Broker pages -->
   <url><loc>https://www.ajcommercialgroup.com/broker-alex-munoz</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/broker-anthony-munoz</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/broker-brandon-bucio</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
@@ -27,7 +27,7 @@
   <url><loc>https://www.ajcommercialgroup.com/broker-merry-galindo</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/broker-tyler-jimenez</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
 
-  <!-- Property pages — explicitly LOW priority so Google deprioritizes them as sitelink candidates -->
+  <!-- Property pages (excludes 744 Gillette — noindexed) -->
   <url><loc>https://www.ajcommercialgroup.com/property-1016-e-division-st-1025</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/property-1100-s-state-st-55</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/property-1107-koch-st-21</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
@@ -66,7 +66,6 @@
   <url><loc>https://www.ajcommercialgroup.com/property-6501-18th-st-44</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/property-6607-181st-street-1027</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/property-7349-175th-st-12</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://www.ajcommercialgroup.com/property-744-gillette-ave-6</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/property-7615-roosevelt-rd-16</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/property-7801-oak-park-ave-40</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://www.ajcommercialgroup.com/property-805807-n-wilke-rd-23</loc><lastmod>2026-06-03</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
