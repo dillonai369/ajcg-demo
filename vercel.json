@@ -45,8 +45,23 @@
     { "source": "/properties", "destination": "/recently-sold", "permanent": true },
     { "source": "/listings", "destination": "/recently-sold", "permanent": true },
     { "source": "/sold", "destination": "/recently-sold", "permanent": true },
+    { "source": "/sold-commercial-properties", "destination": "/recently-sold", "permanent": true },
     { "source": "/closed-deals", "destination": "/recently-sold", "permanent": true },
-    { "source": "/track-record", "destination": "/recently-sold", "permanent": true }
+    { "source": "/track-record", "destination": "/recently-sold", "permanent": true },
+
+    { "source": "/chicagoland-commercial-property-values", "destination": "/selling", "permanent": true },
+    { "source": "/navigating-the-2025-lending-market-what-multifamily-owners-need-to-know", "destination": "/blog", "permanent": true },
+
+    { "source": "/Buying", "destination": "/buying", "permanent": true },
+    { "source": "/Selling", "destination": "/selling", "permanent": true },
+    { "source": "/Contact", "destination": "/contact", "permanent": true },
+    { "source": "/Careers", "destination": "/careers", "permanent": true },
+    { "source": "/Blog", "destination": "/blog", "permanent": true },
+    { "source": "/News", "destination": "/blog", "permanent": true },
+    { "source": "/Our-Team", "destination": "/our-team", "permanent": true },
+    { "source": "/Team", "destination": "/our-team", "permanent": true },
+    { "source": "/Recently-Sold", "destination": "/recently-sold", "permanent": true },
+    { "source": "/Properties", "destination": "/recently-sold", "permanent": true }
   ],
   "headers": [
     {
